@@ -1,0 +1,67 @@
+
+
+<div class="card">
+    <div class="card-header">Controles de color y opacidad</div>
+    <div class="card-body">
+        <div class="custom-item" *ngIf="!canvas.selected">
+
+            <div class="custom-item">
+                <div class="custom-item-body">
+                    <div class="custom-item-title">ID</div>
+
+                    <input type="text" class="form-control" value="No items selected">
+                </div>
+
+
+            </div>
+
+            <div class="custom-item">
+
+                <div class="custom-item-body">
+                    <div class="custom-item-title">Nombre</div>
+
+                    <input type="text" class="form-control" value="No items selected">
+                </div>
+            </div>
+            <div class="custom-item">
+                <div class="custom-item-title">Nivel de opacidad</div>
+
+                <div class="custom-item-body">
+                    <input type="range" value="0"></div>
+            </div>
+            <div class="custom-item">
+                <div class="custom-item-title">Color de relleno</div>
+                <div class="custom-item-body">
+                    <input type="text" class="form-control" [cpPosition]="'bottom'" [(colorPicker)]="canvas.props.fill" [style.background]="canvas.props.fill"
+                        [value]="canvas.props.fill" (colorPickerChange)="setFill()">
+                </div>
+            </div>
+
+        </div>
+        <div class="custom-item" *ngIf="canvas.selected && canvas.selected.type != 'group'">
+            <div class="custom-item-body">
+                <div class="custom-item-title">ID</div>
+                <input type="text" class="form-control" [(ngModel)]="canvas.props.id" (keyup)="setId()">
+            </div>
+        </div>
+
+        <div class="custom-item" *ngIf="canvas.selected && canvas.selected.type != 'group'">
+            <div class="custom-item-body">
+                <div class="custom-item-title">Nombre</div>
+                <input type="text" class="form-control" [(ngModel)]="canvas.props.nombre" (keyup)="setId()">
+            </div>
+        </div>
+
+        <div class="custom-item" *ngIf="canvas.selected && canvas.selected.type != 'group'">
+            <div class="custom-item-title">Nivel de opacidad</div>
+            <div class="custom-item-body">
+                <input type="range" [(ngModel)]="canvas.props.opacity" (change)="setOpacity()">{{canvas.props.opacity}}</div>
+        </div>
+        <div class="custom-item" *ngIf="canvas.selected">
+            <div class="custom-item-title">Color de relleno</div>
+            <div class="custom-item-body">
+                <input type="text" class="form-control" [cpPosition]="'bottom'" [(colorPicker)]="canvas.props.fill" [style.background]="canvas.props.fill"
+                    [value]="canvas.props.fill" (colorPickerChange)="setFill()">
+            </div>
+        </div>
+</div>
