@@ -7,12 +7,11 @@ import { CanvasProps } from 'src/app/CanvasProps';
 import { CanvasService } from 'src/app/canvas.service';
 
 @Component({
-  selector: 'angular-editor-fabric-js',
-  templateUrl: './angular-editor-fabric-js.component.html',
-  styleUrls: ['./angular-editor-fabric-js.component.css'],
+  selector: 'app-editor-lienzo',
+  templateUrl: './editor-lienzo.component.html',
+  styleUrls: ['./editor-lienzo.component.scss'],
 })
-
-export class FabricjsEditorComponent implements AfterViewInit {
+export class EditorLienzoComponent implements AfterViewInit {
   @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
 
   private canvas: fabric.Canvas;

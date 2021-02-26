@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { FabricjsEditorComponent } from "projects/angular-editor-fabric-js/src/public-api";
+import { EditorLienzoComponent } from "../app/editor-lienzo/editor-lienzo.component";
 // import { OBJETOSPROPS2 } from "./mock-props";
 // import { OBJETOSPROPS } from "./mock-props";
 
@@ -25,7 +25,7 @@ export class AppComponent implements OnInit{
   }
 
       
-  @ViewChild("canvas", { static: false }) canvas: FabricjsEditorComponent;
+  @ViewChild("canvas", { static: false }) canvas: EditorLienzoComponent;
 
 
 

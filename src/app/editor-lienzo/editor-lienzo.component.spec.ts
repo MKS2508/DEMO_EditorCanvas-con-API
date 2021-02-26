@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FabricjsEditorComponent } from './angular-editor-fabric-js.component';
+import { EditorLienzoComponent } from './editor-lienzo.component';
 
-describe('FabricjsLibraryComponent', () => {
-  let component: FabricjsEditorComponent;
-  let fixture: ComponentFixture<FabricjsEditorComponent>;
+describe('EditorLienzoComponent', () => {
+  let component: EditorLienzoComponent;
+  let fixture: ComponentFixture<EditorLienzoComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FabricjsEditorComponent ]
+      declarations: [ EditorLienzoComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FabricjsEditorComponent);
+    fixture = TestBed.createComponent(EditorLienzoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
