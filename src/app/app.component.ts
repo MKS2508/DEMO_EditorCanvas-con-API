@@ -13,7 +13,7 @@ import { CanvasService } from './canvas.service';
 export class AppComponent implements OnInit{
   title = "angular-editor-fabric-js";
 
-  public lienzos = [];
+  public lienzos = []; //lista objetos 
 
 
   constructor(private _lienzoService : CanvasService){
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit{
 
 
 
-  public loadCanvasFromMocks(mock: string) {
+  public loadCanvasFromMocks(mock: string): void{ //METODO PARA PROBAR, **BORRAR DE AQUI**
 
   console.log("N LIENZOS == "+this.lienzos.length)
     if (mock === "Aula 1") {
@@ -43,61 +43,61 @@ export class AppComponent implements OnInit{
     }
   }
 
-  public saveCanvasToDB() {
+  public saveCanvasToDB(): void {
     this.canvas.saveCanvasToDB();
   }
 
-  public confirmClear() {
+  public confirmClear(): void {
     this.canvas.confirmClear();
   }
 
-  public changeSize() {
+  public changeSize(): void {
     this.canvas.changeSize();
   }
 
-  public addFigure() {
+  public addFigure(): void {
     this.canvas.addFigure();
   }
 
-  public removeSelected() {
+  public removeSelected(): void {//METODO PARA PROBAR, **BORRAR DE AQUI* 
     this.canvas.removeSelected();
     this.lienzos = null;
     this._lienzoService.getLienzos().subscribe(data => this.lienzos = data);
   }
 
-  public sendToBack() {
+  public sendToBack(): void {
     this.canvas.sendToBack();
   }
 
-  public bringToFront() {
+  public bringToFront():void {
     this.canvas.bringToFront();
   }
 
-  public clone() {
+  public clone():void {
     this.canvas.clone();
   }
 
-  public cleanSelect() {
+  public cleanSelect():void {
     this.canvas.cleanSelect();
   }
 
-  public setCanvasFill() {
+  public setCanvasFill():void {
     this.canvas.setCanvasFill();
   }
 
-  public setCanvasImage() {
+  public setCanvasImage():void {
     this.canvas.setCanvasImage();
   }
 
-  public setId() {
+  public setId():void {
     this.canvas.setId();
   }
 
-  public setOpacity() {
+  public setOpacity():void {
     this.canvas.setOpacity();
   }
 
-  public setFill() {
+  public setFill():void {
     this.canvas.setFill();
   }
 
