@@ -38,7 +38,7 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
     this.actualizar();
 
 
-  }3
+  }
 
   public url: string | ArrayBuffer = "";
 
@@ -90,13 +90,14 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
 
     this.canvas.setWidth(this.size.width);
     this.canvas.setHeight(this.size.height);
-    // this.setCanvasImage();
     // get references to the html canvas element & its context
     this.canvas.on("mouse:down", (e) => {
       const canvasElement: any = document.getElementById("canvas");
     });
     // console.error("CANVAS - "+ this.canvas)
     this.comunicadorService.enviarMensajeCanvas(this.canvas);
+    this.setCanvasImage();
+
   }
 
   actualizar(){
