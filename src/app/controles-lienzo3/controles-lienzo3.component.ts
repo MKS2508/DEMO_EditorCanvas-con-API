@@ -1,33 +1,31 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { EditorLienzoComponent } from "../app/editor-lienzo/editor-lienzo.component";
-import { ControlesLienzoComponent } from "../app/controles-lienzo/controles-lienzo.component"
-import { ComunicadorService } from 'src/app/comunicador.service';
-
+import { EditorLienzoComponent } from "../editor-lienzo/editor-lienzo.component";
 // import { OBJETOSPROPS2 } from "./mock-props";
 // import { OBJETOSPROPS } from "./mock-props";
 
-import { CanvasService } from './canvas.service';
-
+import { CanvasService } from '../canvas.service';
+import * as fabric from "fabric/fabric-impl";
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
+  selector: 'app-controles-lienzo3',
+  templateUrl: './controles-lienzo3.component.html',
+  styleUrls: ['./controles-lienzo3.component.scss']
 })
-export class AppComponent implements OnInit{
-  title = "angular-editor-fabric-js";
+export class ControlesLienzo3Component implements OnInit {
+
+
+
+
+
 
   public lienzos = []; //lista objetos 
 
 
-  constructor(private lienzoService : CanvasService, private comunicadorService: ComunicadorService){
+  constructor(private lienzoService : CanvasService){
   
   }
-  mensaje: String;
   ngOnInit(): void {
-    console.warn("LLEGA")
-    this.comunicadorService.enviarMensajeObservable.subscribe(data => this.mensaje = data)
     this.lienzoService.getLienzos().subscribe(data => {this.lienzos = data, console.log(data)});
-    this
+    console.log(this.lienzos.length)
   }
 
       
@@ -41,8 +39,6 @@ export class AppComponent implements OnInit{
 
   console.log("N LIENZOS == "+this.lienzos.length)
     if (mock === "Aula 1") {
-      console.warn("LLEGA")
-
       this.canvas.loadCanvasFromMocks(this.lienzos);
     } else if (mock === "Aula 2") {
       this.canvas.loadCanvasFromMocks(this.lienzos);
@@ -52,7 +48,6 @@ export class AppComponent implements OnInit{
   }
 
   public saveCanvasToDB(): void {
-
     this.canvas.saveCanvasToDB();
   }
 
@@ -64,9 +59,12 @@ export class AppComponent implements OnInit{
     this.canvas.changeSize();
   }
 
-  public addFigure(): void {
-    this.canvas.addFigure();
-  }
+
+
+
+  randomId() {
+    return Math.floor(Math.random() * 999999) + 1;
+  } // 
 
   public removeSelected(): void {//METODO PARA PROBAR, **BORRAR DE AQUI* 
     this.canvas.removeSelected();

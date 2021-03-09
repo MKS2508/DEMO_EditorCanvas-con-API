@@ -1,159 +1,135 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { fabric } from 'fabric';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  ChangeDetectorRef,
+  OnInit,
+} from "@angular/core";
+import { fabric } from "fabric";
 
 import { ObjProps } from "src/app/obj-props";
 
-import { CanvasProps } from 'src/app/CanvasProps';
-import { CanvasService } from 'src/app/canvas.service';
+import { CanvasProps } from "src/app/CanvasProps";
+import { CanvasService } from "src/app/canvas.service";
+
+import { CanvasFactory } from "src/app/canvas-factory";
+import { ComunicadorService } from "../comunicador.service";
 
 @Component({
-  selector: 'app-editor-lienzo',
-  templateUrl: './editor-lienzo.component.html',
-  styleUrls: ['./editor-lienzo.component.scss'],
+  selector: "app-editor-lienzo",
+  templateUrl: "./editor-lienzo.component.html",
+  styleUrls: ["./editor-lienzo.component.scss"],
 })
-export class EditorLienzoComponent implements AfterViewInit {
-  @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
+export class EditorLienzoComponent implements AfterViewInit, OnInit {
+  @ViewChild("htmlCanvas") htmlCanvas: ElementRef;
 
-  private canvas: fabric.Canvas;
+  CanvasFactory: CanvasFactory = null;
+  public canvas: fabric.Canvas;
+  public props: CanvasProps;
+  private objeto1: ObjProps;
+  public size: any;
 
-  public props: CanvasProps = { // obj canvas
-    canvasFill: '#ffffff',
-    canvasImage: '',
-    id: 1,
-    nombre: null,
-    opacity: null,
-    fill: null,
-  };
+  ngOnInit(): void {
+    this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService);
+    this.props = this.CanvasFactory.props;
+    this.objeto1 = this.CanvasFactory.objetoBD;
+    this.size = this.CanvasFactory.size;
+    this.actualizar();
 
-  private objeto1: ObjProps = { //objBD
-    id: 0,
-    nombre: 'a',
-    lienzo: '',
-    width: 0,
-    height:0,
-    left_canvas:0,
-    top_canvas:0,
-    angle:0,
-    fill:'#ffffff',
-    opacity:0, 
-    canvasImage:'', 
-    cnvIMG: ''
-  }
 
-  public url: string | ArrayBuffer = '';
-  public size: any = {
-    width: 1140,
-    height: 800
-  };
+  }3
+
+  public url: string | ArrayBuffer = "";
 
   public textEditor: boolean = false;
+
   public figureEditor: boolean = false;
-  
+
   public selected: fabric.Object;
 
-  constructor(private _lienzoService : CanvasService, private ref: ChangeDetectorRef){}
+  constructor(
+    private lienzoService: CanvasService,
+    private ref: ChangeDetectorRef, 
+    private comunicadorService: ComunicadorService
+
+  ) {}
 
   ngAfterViewInit(): void {
-
     // setup front side canvas
     this.canvas = new fabric.Canvas(this.htmlCanvas.nativeElement, {
-      hoverCursor: 'pointer',
+      hoverCursor: "pointer",
       selection: true,
-      selectionBorderColor: 'blue'
+      selectionBorderColor: "blue",
     });
 
+
+    let seleccionado: String = this.CanvasFactory.seleccionado;
     this.canvas.on({
-      'object:moving': (e) => { },
-      'object:modified': (e) => { },
-      'object:selected': (e) => {
+      "object:moving": (e) => {},
+      "object:modified": (e) => {},
+      "object:selected": (e) => {
         const selectedObject = e.target;
         this.selected = selectedObject;
         selectedObject.hasRotatingPoint = true;
         selectedObject.transparentCorners = false;
-        selectedObject.cornerColor = 'red';
+        selectedObject.cornerColor = "red";
 
         this.resetPanels();
 
-        if (selectedObject.type !== 'group' && selectedObject) {
-
+        if (selectedObject.type !== "group" && selectedObject) {
           this.getId();
           this.getOpacity();
         }
       },
-      'selection:cleared': (e) => {
+      "selection:cleared": (e) => {
         this.selected = null;
         this.resetPanels();
-      }
+      },
     });
 
     this.canvas.setWidth(this.size.width);
     this.canvas.setHeight(this.size.height);
-    this.setCanvasImage();
+    // this.setCanvasImage();
     // get references to the html canvas element & its context
-    this.canvas.on('mouse:down', (e) => {
-      const canvasElement: any = document.getElementById('canvas');
+    this.canvas.on("mouse:down", (e) => {
+      const canvasElement: any = document.getElementById("canvas");
     });
+    // console.error("CANVAS - "+ this.canvas)
+    this.comunicadorService.enviarMensajeCanvas(this.canvas);
+  }
+
+  actualizar(){
+    console.warn("SIZE ES : " + this.size.width)
+    this.comunicadorService.enviarMensajeSize(this.size)
+    this.comunicadorService.enviarMensaje(this.size)
+    this.comunicadorService.enviarSizeObservable.subscribe(data => {console.warn(data.width + "edITOR" + this.size.width), this.size = data, this.changeSize()});
+    this.comunicadorService.enviarMensajeObservable.subscribe(data => {console.warn(data), this.addFigure()})
 
   }
 
-  changeSize(): void { // tamanio canvas
+  changeSize(): void {
+    // tamanio canvas
     this.canvas.setWidth(this.size.width);
     this.canvas.setHeight(this.size.height);
   }
 
-  addFigure(): void { // agregar rectangulo nuevo
-    let add: any;
-      add = new fabric.Rect({
-          width: 200, height: 100, left: 10, top: 10, angle: 0,
-          fill: '#3f51b5'
-      });
-    var randomizedId: number = this.randomId();
-    this.extend(add, randomizedId, 'a'+randomizedId, this.props.canvasImage);
-    this.canvas.add(add);
-    this.selectItemAfterAdded(add);
-    console.log("ADDFIG "+ this.props.canvasImage);
+  addFigure(): void {
+    // agregar rectangulo nuevo
+    this.CanvasFactory.addFigure();
   }
 
-  addFigureParam ( // agregar figura guardada
-    idParam:number,
-    nombreParam:string,
-    widthParam:number,
-    heightParam:number,
-    leftParam:number,
-    topParam:number,
-    angleParam:number,
-    fillParam:string,
-    opacityParam:number,
-    canvImageParam:string
-  ): void {
-    let add: any;
-  
-    var rect = new fabric.Rect({
-      width: widthParam,
-      height: heightParam,
-      left: leftParam,
-      top: topParam,
-      angle: angleParam,
-      fill: fillParam,
-      opacity: opacityParam,
-    });
-  
-    this.extend(rect, idParam, nombreParam, canvImageParam);
-  
-    this.canvas.add(rect);
-    this.canvas.renderAll();
-    this.setCanvasImage();
-    this.selectItemAfterAdded(rect);
+  addFigureParam(Objeto: ObjProps): void {
+    this.CanvasFactory.addFigureParam(Objeto);
   }
 
   cleanSelect(): void {
     this.canvas.discardActiveObject().renderAll();
   } //des-seleccion
 
-  selectItemAfterAdded(obj):void {
-    this.canvas.discardActiveObject().renderAll();
-    this.canvas.setActiveObject(obj);
-  }//se utiliza despues de pintar un obj
+  selectItemAfterAdded(obj): void {
+    this.CanvasFactory.selectItemAfterAdded(obj);
+  } //se utiliza despues de pintar un obj
 
   setCanvasFill(): void {
     if (!this.props.canvasImage) {
@@ -162,150 +138,45 @@ export class EditorLienzoComponent implements AfterViewInit {
     }
   } // color relleno
 
-  extend(obj:any, id:number, nombre: string, cnvIMG:string): void{
-    obj.toObject = (function (toObject): any {
-      return function () {
-        return fabric.util.object.extend(toObject.call(this), {
-          id: id,
-          nombre: nombre,
-          cnvIMG: cnvIMG
-        });
-      };
-    })(obj.toObject);
-    obj.id = id;
-    obj.nombre = nombre;
-    cnvIMG = this.props.canvasImage;
-    obj.cnvIMG = cnvIMG;
+  extend(obj: any, id: number, nombre: string, cnvIMG: string): void {
+    this.CanvasFactory.extend(obj, id, nombre, cnvIMG);
   } // este metodo extiende el objeto del canvas con los parametros extra (ID, name...)
 
-  setCanvasImage(): void{
-    const self = this;
-    if (this.props.canvasImage) {
-      this.canvas.setBackgroundColor(new fabric.Pattern({ source: this.props.canvasImage, repeat: 'repeat' }), () => {
-        self.props.canvasFill = '';
-        self.canvas.renderAll();
-      });
-    }
-    this.canvas.renderAll();
-    console.log("CANVASIMG " +this.props.canvasImage);
-    this.canvas.setWidth(0);
-    this.canvas.setWidth(1140);
-    this.ref.detectChanges()
+  setCanvasImage(): void {
+    this.CanvasFactory.setCanvasImage();
   } // este metodo settea la imagen de fondo del lienzo
-  
-  setCanvasImageParam(cnvImg: string): void{
-    const self = this;
- 
-      this.canvas.setBackgroundColor(new fabric.Pattern({ source: cnvImg, repeat: 'repeat' }), () => {
-        self.props.canvasFill = '';
-        self.canvas.renderAll();
-      });
-    this.props.canvasImage = cnvImg;
-    this.canvas.renderAll();
-    console.log("CANVASIMG");
-    this.canvas.setWidth(0);
-    this.canvas.setWidth(1140);
+
+  setCanvasImageParam(cnvImg: string): void {
+    this.CanvasFactory.setCanvasImageParam(cnvImg);
   } // este metodo settea la imagen de fondo del lienzo, cuando la recuperamos de BD
 
-  randomId() {
-    return Math.floor(Math.random() * 999999) + 1;
-  } // genera id aleatorio
-  
-//getter y setter estilo canvas
+  randomId(): number {
+    return this.CanvasFactory.randomId();
+  }
+
+  //getter y setter estilo canvas
   getActiveStyle(styleName, object): any {
-    object = object || this.canvas.getActiveObject();
-    if (!object) { return ''; }
-
-    if (object.getSelectionStyles && object.isEditing) {
-      return (object.getSelectionStyles()[styleName] || '');
-    } else {
-      return (object[styleName] || '');
-    }
+    this.CanvasFactory.getActiveStyle(styleName, object);
   }
 
-  setActiveStyle(styleName, value: string | number, object: fabric.IText):void  {
-    object = object || this.canvas.getActiveObject() as fabric.IText;
-    if (!object) { return; }
-
-    if (object.setSelectionStyles && object.isEditing) {
-      const style = {};
-      style[styleName] = value;
-
-      if (typeof value === 'string') {
-        if (value.includes('underline')) {
-          object.setSelectionStyles({underline: true});
-        } else {
-          object.setSelectionStyles({underline: false});
-        }
-
-        if (value.includes('overline')) {
-          object.setSelectionStyles({overline: true});
-        } else {
-          object.setSelectionStyles({overline: false});
-        }
-
-        if (value.includes('line-through')) {
-          object.setSelectionStyles({linethrough: true});
-        } else {
-          object.setSelectionStyles({linethrough: false});
-        }
-      }
-
-      object.setSelectionStyles(style);
-      object.setCoords();
-
-    } else {
-      if (typeof value === 'string') {
-        if (value.includes('underline')) {
-        object.set('underline', true);
-        } else {
-          object.set('underline', false);
-        }
-
-        if (value.includes('overline')) {
-          object.set('overline', true);
-        } else {
-          object.set('overline', false);
-        }
-
-        if (value.includes('line-through')) {
-          object.set('linethrough', true);
-        } else {
-          object.set('linethrough', false);
-        }
-      }
-
-      object.set(styleName, value);
-    }
-
-    object.setCoords();
-    this.canvas.renderAll();
+  setActiveStyle(
+    styleName,
+    value: string | number,
+    object: fabric.IText
+  ): void {
+    this.CanvasFactory.setActiveStyle(styleName, value, object);
   }
 
-//clonar obj
+  //clonar obj
   clone(): void {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
 
     if (activeObject) {
       let clone;
-      switch (activeObject.type) {
-        case 'rect':
-          clone = new fabric.Rect(activeObject.toObject());
-          break;
-        case 'circle':
-          clone = new fabric.Circle(activeObject.toObject());
-          break;
-        case 'triangle':
-          clone = new fabric.Triangle(activeObject.toObject());
-          break;
-        case 'i-text':
-          clone = new fabric.IText('', activeObject.toObject());
-          break;
-        case 'image':
-          clone = fabric.util.object.clone(activeObject);
-          break;
-      }
+
+      clone = new fabric.Rect(activeObject.toObject());
+
       if (clone) {
         clone.set({ left: 10, top: 10 });
         this.canvas.add(clone);
@@ -313,49 +184,58 @@ export class EditorLienzoComponent implements AfterViewInit {
       }
     }
   }
-//getter y setter
-  getId(): void{
-    console.log('SIZE DEL CANVAS :'+this.canvas.size());
+
+  //getter y setter
+  getId(): void {
+    console.log("SIZE DEL CANVAS :" + this.canvas.size());
     this.props.id = this.canvas.getActiveObject().toObject().id;
     this.props.nombre = this.canvas.getActiveObject().toObject().nombre;
     console.log("GET ID ACTIVADO 2 -->" + this.props.id);
     console.log("GET NOMBRE ACTIVADO 2 -->" + this.props.nombre);
   }
-  
-  setId(): void{
-    const valID:number = this.props.id;
-    const valNombre:string = this.props.nombre;
-    const valcnv:string = this.props.canvasImage;
-    const complete = this.canvas.getActiveObject().toObject(["id", "nombre","cnvIMG"]);
+
+  setId(): void {
+    const valID: number = this.props.id;
+    const valNombre: string = this.props.nombre;
+    const valcnv: string = this.props.canvasImage;
+    const complete = this.canvas
+      .getActiveObject()
+      .toObject(["id", "nombre", "cnvIMG"]);
     console.log(complete);
     this.canvas.getActiveObject().toObject = () => {
       complete.id = valID;
       complete.nombre = valNombre;
-      complete.cnvIMG =  valcnv;
+      complete.cnvIMG = valcnv;
       return complete;
     };
   }
 
-  getOpacity():void {
-    this.props.opacity = this.getActiveStyle('opacity', null) * 100;
+  getOpacity(): void {
+    this.props.opacity = this.getActiveStyle("opacity", null) * 100;
   }
 
-  setOpacity():void {
-    this.setActiveStyle('opacity', parseInt(this.props.opacity, 10) / 100, null);
+  setOpacity(): void {
+    this.setActiveStyle(
+      "opacity",
+      parseInt(this.props.opacity, 10) / 100,
+      null
+    );
   }
 
-  getFill():void {
-    this.props.fill = this.getActiveStyle('fill', null);
+  getFill(): void {
+    this.props.fill = this.getActiveStyle("fill", null);
   }
 
-  setFill():void {
-    this.setActiveStyle('fill', this.props.fill, null);
+  setFill(): void {
+    this.setActiveStyle("fill", this.props.fill, null);
   }
 
-  removeSelected():void {
+  removeSelected(): void {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
-    const activeId = this.canvas.getActiveObject().toDatalessObject(["id","nombre","CNVIMG"]).id;
+    const activeId = this.canvas
+      .getActiveObject()
+      .toDatalessObject(["id", "nombre", "CNVIMG"]).id;
     if (activeObject) {
       this.canvas.remove(activeObject);
       // this.textString = '';
@@ -366,10 +246,10 @@ export class EditorLienzoComponent implements AfterViewInit {
         self.canvas.remove(object);
       });
     }
-   this.deleteCanvasFromDB(activeId);
+    this.deleteCanvasFromDB(activeId);
   } // eliminar bd el seleccionado
 
-  bringToFront():void {
+  bringToFront(): void {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
 
@@ -382,9 +262,9 @@ export class EditorLienzoComponent implements AfterViewInit {
         object.bringToFront();
       });
     }
-  }//traer figura al frente, superponer encima de otra
+  } //traer figura al frente, superponer encima de otra
 
-  sendToBack(): void{
+  sendToBack(): void {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
 
@@ -398,109 +278,75 @@ export class EditorLienzoComponent implements AfterViewInit {
         object.sendToBack();
       });
     }
-  }// el contrario del metodo anterior
+  } // el contrario del metodo anterior
 
-  confirmClear():void {
-    if (confirm('Se va a eliminar el lienzo')) {
+  confirmClear(): void {
+    if (confirm("Se va a eliminar el lienzo")) {
       this.canvas.clear();
     }
   }
   //limpia el lienzo entero, no los borra de la bd
 
-  resetPanels():void {
+  resetPanels(): void {
     this.figureEditor = false;
   }
 
-  private objeto2: ObjProps = { //objFind
-    id: 0,
-    nombre: 'a',
-    lienzo: '',
-    width: 0,
-    height:0,
-    left_canvas:0,
-    top_canvas:0,
-    angle:0,
-    fill:'#ffffff',
-    opacity:0, 
-    canvasImage:'',
-    cnvIMG:''
-  }
-
   findByID(id: string): boolean {
-    console.log("OBJETO FIND "+id)
-    this._lienzoService.findLienzo(id).subscribe(data => this.objeto2 = data);
-    console.log("OBJETO FIND "+this.objeto2.id + "DATA "+ this.objeto2.id);
-    if (this.objeto2.id != 0){
-      return true;
-    } else {
-      return false;
-    }
+    return this.CanvasFactory.existe(id);
   } // encontrar por id, comprobar si existe
 
-  saveCanvasToDB(): void{
-
-    var sizeCanvas = this.canvas.size();
+  saveCanvasToDB(): void {
+    let sizeCanvas = this.canvas.size();
     let arrayProps = [];
-  
-    // this.canvas.clear();
-    for (var i = 0; i <= sizeCanvas - 1; i++) {
-      var item = this.canvas.item(i).toDatalessObject(["id", "nombre","cnvIMG"]);
-      item.canvasImage = item.cnvIMG;
-      console.log("MEDIO "+item.canvasImage);
-      if(this.findByID(item.id) === true){//si el canvas existe, actualiza, si se cambia el id, borra y pinta
-        this.updateCanvasFromDB(item);
-        console.log("EXISTE, ACTUALIZANDO")
-      } else{
-        this._lienzoService.postLienzo(item).subscribe(data => console.log(data));
-        console.log("NO EXISTE, CREANDO")
 
+    // this.canvas.clear();
+    for (let i = 0; i <= sizeCanvas - 1; i++) {
+      let item = this.canvas
+        .item(i)
+        .toDatalessObject(["id", "nombre", "cnvIMG"]);
+      item.canvasImage = item.cnvIMG;
+      console.log("MEDIO " + item.canvasImage);
+      if (this.findByID(item.id) === true) {
+        //si el canvas existe, actualiza, si se cambia el id, borra y pinta
+        this.updateCanvasFromDB(item);
+        console.log("EXISTE, ACTUALIZANDO");
+      } else {
+        this.lienzoService
+          .postLienzo(item)
+          .subscribe((data) => console.log(data));
+        console.log("NO EXISTE, CREANDO");
       }
     }
-    
-  }//guardar en bd
+  } //guardar en bd
 
-  deleteCanvasFromDB(id:number): void{
-
-      this._lienzoService.deleteLienzo(id).subscribe(data => console.log("OBJETO CON ID: "+id + "ELIMINADO DE LA BD ----- "+data)); 
-
+  deleteCanvasFromDB(id: number): void {
+    this.CanvasFactory.deleteCanvasFromDB(id);
   } //eliminar elemento de la bd, se llama desde removeSelected
 
-  updateCanvasFromDB(Object:ObjProps): void{
-    this._lienzoService.updateLienzo(Object).subscribe(data => console.log("OBJETO CON ID: "+Object.id + "ACTUALIZADO DE LA BD ----- "+data)); 
-} // update
-  
-  
-  loadCanvasFromMocks(mock: ObjProps[]):void {
+  updateCanvasFromDB(obj: ObjProps): void {
+    this.CanvasFactory.updateCanvasFromDB(obj);
+  } // update
 
-    var longitudObjetos = mock.length;
+  loadCanvasFromMocks(mock: ObjProps[]): void {
+    let longitudObjetos = mock.length;
     this.confirmClear();
 
-    for (var i = 0; i <= longitudObjetos - 1; i++) {
-        this.addFigureParam(
-        mock[i].id,
-        mock[i].nombre,
-        mock[i].width,
-        mock[i].height,
-        mock[i].left_canvas,
-        mock[i].top_canvas,
-        mock[i].angle,
-        mock[i].fill,
-        mock[i].opacity,
-        mock[i].canvasImage
-        
+    for (let i = 0; i <= longitudObjetos - 1; i++) {
+      this.addFigureParam(mock[i]);
+      console.log("cnvimg" + mock[i].canvasImage);
+      this.canvas.item(0).toDatalessObject().canvasImage = mock[i].canvasImage;
+      console.log(
+        "cnvimg" + this.canvas.item(0).toDatalessObject().canvasImage
       );
-      console.log('cnvimg'+mock[i].canvasImage);
-      this.canvas.item(0).toDatalessObject().canvasImage = mock[i].canvasImage ;
-      console.log('cnvimg'+this.canvas.item(0).toDatalessObject().canvasImage);
       this.setCanvasImageParam(mock[i].canvasImage);
       this.props.canvasImage = mock[i].canvasImage;
-      console.log('propsIMG  '+this.props.canvasImage);
+      console.log("propsIMG  " + this.props.canvasImage);
       this.setCanvasImage();
       this.canvas.renderAll();
       this.selectItemAfterAdded(this.canvas.item(0));
-    }    
+    }
     this.canvas.setWidth(0);
     this.canvas.setWidth(1140);
-    this.ref.detectChanges()
+    this.ref.detectChanges();
   } // cargar desde bd
 }

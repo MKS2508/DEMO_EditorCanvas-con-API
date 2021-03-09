@@ -1,218 +1,26 @@
 <h1 class="col-xl-12 text-center">
     👩‍💻 DEMO EDITOR CANVAS ANGULAR FABRICJS 🐱‍💻
 </h1>
+<p>
+    MENSAJE: {{mensaje}}
+</p>
 <div class="container">
 
     <div class="row">
         <div class="col-xl-4 text-center">
 
 
-            <div class="card">
-                <div class="card-header">Tamaño del lienzo</div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" class="form-control" [(ngModel)]="canvas.size.width"
-                                (keyup)="changeSize()">
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    Anchura del lienzo
-                                </span>
-                            </div>
-                        </div>
-                    </div>  
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" [(ngModel)]="canvas.size.height"
-                                (keyup)="changeSize()">
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    Altura del lienzo
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-
-
-                </div>
-                <div class="card">
-                    <div class="card-header">Opciones</div>
-                    <div class="card-body text-center">
-                        <div class="btn-group" role="group" aria-label="...">
-                            <button data-toggle="tooltip" data-placement="bottom" title="Delete element" type="button"
-                                class="btn btn-outline-danger" [disabled]="!canvas.selected"
-                                (click)="removeSelected();">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </button>
-                            <button data-toggle="tooltip" data-placement="bottom" title="Send to back" type="button"
-                                class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="sendToBack();">
-                                <i class="fa fa-level-down" aria-hidden="true"></i>
-                            </button>
-                            <button data-toggle="tooltip" data-placement="bottom" title="Send to front" type="button"
-                                class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="bringToFront();">
-                                <i class="fa fa-level-up" aria-hidden="true"></i>
-                            </button>
-                            <button data-toggle="tooltip" data-placement="bottom" title="Clone" type="button"
-                                class="btn btn-outline-primary"
-                                [disabled]="!canvas.selected || canvas.selected.type == 'group'" (click)="clone();">
-                                <i class="fa fa-clone" aria-hidden="true"></i>
-                            </button>
-                            <button data-toggle="tooltip" data-placement="bottom" title="Unselect" type="button"
-                                class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="cleanSelect()">
-                                <i class="fa fa-remove" aria-hidden="true"></i>
-                            </button>
-
-
-                        </div>
-
-                        <div class="custom-item-title">Controles basicos</div>
-
-                        <button data-toggle="tooltip" data-placement="bottom" title="Clean Canvas" type="button"
-                            class="btn btn-danger" (click)="confirmClear();">
-                            <i class="fa fa-ban" aria-hidden="true"></i> BORRAR LIENZO</button>
-                        <button type="button" class="btn btn-primary" (click)="addFigure();">Agregar rectangulo</button>
-                    </div>
-                </div>
-            </div>
+            <app-controles-lienzo></app-controles-lienzo>
 
         </div>
         <div class="col-xl-4 text-center">
-
-            <div class="card">
-                <div class="card-header">Guardar / Importar</div>
-                <div class="custom-item-title">Controles Edicion</div>
-
-                <button data-toggle="tooltip" data-placement="bottom" title="Save in localStorage" type="button"
-                    class="btn btn-primary">
-                    <i class="fa fa-save" aria-hidden="true"></i> Guardar cambios localmente</button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Load from localStorage" type="button"
-                    class="btn btn-primary" (click)="loadCanvasFromMocks(valor_aula.value);">
-                    <i class="fa fa-save" aria-hidden="true"></i> Cargar ultimo punto de guardado</button>
-
-                <div class="custom-item-title">Controles BD</div>
+            <app-controles-lienzo2></app-controles-lienzo2>
 
 
-                <button data-toggle="tooltip" data-placement="bottom" title="Save in localStorage" type="button"
-                    class="btn btn-primary" (click)="saveCanvasToDB();">
-                    <i class="fa fa-save" aria-hidden="true"></i> Guardar en BD</button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Load from localStorage" type="button"
-                    class="btn btn-primary" (click)="loadCanvasFromMocks(valor_aula.value);">
-              
-                    <i class="fa fa-save" aria-hidden="true"></i> Cargar desde BD </button>
-                    <input #valor_aula list="aulas" name="aula" id="browser">
-                    <datalist id="aulas">
-                      <option value="Aula 1">
-                      <option value="Aula 2">
-                      <option value="Aula 3">
-                    </datalist>
-
-                <div class="card">
-                    <div class="card-header">Fondo del lienzo</div>
-
-                    <div class="custom-item-title"> Imagen de fondo</div>
-
-                    <div class="card-body">
-                        <div class="custom-item">
-                            <div class="custom-item-body">
-                                <input type="text" class="form-control" placeholder="http://example.jpg"
-                                    [(ngModel)]="canvas.props.canvasImage" (keyup)="setCanvasImage()">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="col-xl-4 text-center">
-            <div class="row">
-                <div class="col-xl-6">
-
-                </div>
-
-                <div class="col-xl-12">
-                    <div class="card">
-                        <div class="card-header">Controles de color y opacidad</div>
-                        <div class="card-body">
-                            <div class="custom-item" *ngIf="!canvas.selected">
-
-                                <div class="custom-item">
-                                    <div class="custom-item-body">
-                                        <div class="custom-item-title">ID</div>
-
-                                        <input type="text" class="form-control" value="No items selected">
-                                    </div>
-
-
-                                </div>
-
-                                <div class="custom-item">
-
-                                    <div class="custom-item-body">
-                                        <div class="custom-item-title">Nombre</div>
-
-                                        <input type="text" class="form-control" value="No items selected">
-                                    </div>
-                                </div>
-                                <div class="custom-item">
-                                    <div class="custom-item-title">Nivel de opacidad</div>
-
-                                    <div class="custom-item-body">
-                                        <input type="range" value="0">
-                                    </div>
-                                </div>
-                                <div class="custom-item">
-                                    <div class="custom-item-title">Color de relleno</div>
-                                    <div class="custom-item-body">
-                                        <input type="text" class="form-control" [cpPosition]="'bottom'"
-                                            [(colorPicker)]="canvas.props.fill" [style.background]="canvas.props.fill"
-                                            [value]="canvas.props.fill" (colorPickerChange)="setFill()">
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="custom-item" *ngIf="canvas.selected && canvas.selected.type != 'group'">
-                                <div class="custom-item-body">
-                                    <div class="custom-item-title">ID</div>
-                                    <input type="text" class="form-control" [(ngModel)]="canvas.props.id"
-                                        (keyup)="setId()">
-                                </div>
-                            </div>
-
-                            <div class="custom-item" *ngIf="canvas.selected && canvas.selected.type != 'group'">
-                                <div class="custom-item-body">
-                                    <div class="custom-item-title">Nombre</div>
-                                    <input type="text" class="form-control" [(ngModel)]="canvas.props.nombre"
-                                        (keyup)="setId()">
-                                </div>
-                            </div>
-
-                            <div class="custom-item" *ngIf="canvas.selected && canvas.selected.type != 'group'">
-                                <div class="custom-item-title">Nivel de opacidad</div>
-                                <div class="custom-item-body">
-                                    <input type="range" [(ngModel)]="canvas.props.opacity"
-                                        (change)="setOpacity()">{{canvas.props.opacity}}
-                                </div>
-                            </div>
-                            <div class="custom-item" *ngIf="canvas.selected">
-                                <div class="custom-item-title">Color de relleno</div>
-                                <div class="custom-item-body">
-                                    <input type="text" class="form-control" [cpPosition]="'bottom'"
-                                        [(colorPicker)]="canvas.props.fill" [style.background]="canvas.props.fill"
-                                        [value]="canvas.props.fill" (colorPickerChange)="setFill()">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-
+            <app-controles-lienzo3></app-controles-lienzo3>
 
 
         </div>
@@ -221,7 +29,7 @@
 
 
 
-        <div class="card">
+        <div class="card" style="width:100%">
             <div class="card-header">
                 <h2 style="text-align: center;">LIENZO 🎨</h2>
             </div>
