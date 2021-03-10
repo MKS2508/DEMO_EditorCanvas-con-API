@@ -19,6 +19,23 @@ export class ComunicadorService {
   private enviarSize = new Subject<any>();
   enviarSizeObservable = this.enviarSize.asObservable();
 
+  private enviarSelected = new Subject<any>();
+  enviarSelectedObservable = this.enviarSelected.asObservable();
+
+  private enviarDeleteAll = new Subject<any>();
+  enviarDeleteAllObservable = this.enviarDeleteAll.asObservable();
+  selected: fabric.Object;
+
+  
+  enviarMensajeDeleteAll() {
+    this.enviarDeleteAll.next("CLEARED");
+  }
+
+  enviarMensajeSelected(selected: any) {
+    this.selected = selected;
+    this.enviarSelected.next(selected);
+  }
+
   enviarMensaje(mensaje: String) {
     this.mensaje = mensaje;
     this.enviarMensajeSubject.next(mensaje);

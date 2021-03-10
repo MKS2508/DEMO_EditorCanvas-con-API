@@ -47,6 +47,10 @@ CanvasFactory: CanvasFactory;
     this.comunicadorService.enviarMensaje("ADDED");
   }
       
+  deleteAll(){
+    this.comunicadorService.enviarMensajeDeleteAll();
+    
+  }
   mensaje:String;
 
   public props: CanvasProps = { // obj canvas

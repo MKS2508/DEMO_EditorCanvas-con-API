@@ -11,7 +11,7 @@
         <div class="form-group">
             <div class="input-group">
                 <input type="text" class="form-control" [(ngModel)]="size.width"
-                   (keyup)="changeSize" >
+                   (keyup)="changeSize()" >
                 <div class="input-group-append">
                     <span class="input-group-text">
                         Anchura del lienzo
@@ -69,7 +69,7 @@
 
             <div class="custom-item-title">Controles basicos</div>
 
-            <button data-toggle="tooltip" data-placement="bottom" title="Clean Canvas" type="button"
+            <button data-toggle="tooltip" (click)="deleteAll()" data-placement="bottom" title="Clean Canvas" type="button"
                 class="btn btn-danger" >
                 <i class="fa fa-ban" aria-hidden="true"></i> BORRAR LIENZO</button>
             <button type="button" class="btn btn-primary" (click)="addFigure();">Agregar rectangulo</button>

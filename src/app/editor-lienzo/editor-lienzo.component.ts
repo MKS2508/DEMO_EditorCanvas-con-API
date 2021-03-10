@@ -106,7 +106,8 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
     this.comunicadorService.enviarMensaje(this.size)
     this.comunicadorService.enviarSizeObservable.subscribe(data => {console.warn(data.width + "edITOR" + this.size.width), this.size = data, this.changeSize()});
     this.comunicadorService.enviarMensajeObservable.subscribe(data => {console.warn(data), this.addFigure()})
-
+    this.comunicadorService.enviarDeleteAllObservable.subscribe(data => {console.warn(data), this.confirmClear()})
+    
   }
 
   changeSize(): void {
