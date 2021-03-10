@@ -8,6 +8,8 @@ import { fabric } from "fabric";
 export class ComunicadorService {
 
   public canvas: fabric.Canvas;
+  public selected: fabric.Object;
+  public clone: any;
 
   mensaje: String;
   private enviarMensajeSubject = new Subject<String>();
@@ -24,11 +26,37 @@ export class ComunicadorService {
 
   private enviarDeleteAll = new Subject<any>();
   enviarDeleteAllObservable = this.enviarDeleteAll.asObservable();
-  selected: fabric.Object;
 
+  private enviarDelete = new Subject<any>();
+  enviarDeleteObservable = this.enviarDelete.asObservable();
+
+  private enviarClone = new Subject<any>();
+  enviarCloneObservable = this.enviarClone.asObservable();
+
+  private enviarBringTo = new Subject<Boolean>();
+  enviarBringToObservable = this.enviarBringTo.asObservable();
   
+  private enviarUnselect = new Subject<any>();
+  enviarUnselectObservable = this.enviarUnselect.asObservable();
+
+  enviarMensajeUnselect(unselect: String){
+    this.enviarUnselect.next(unselect)
+  }
+
+  enviarMensajeClone(clone: any){
+  this.enviarClone.next(clone);
+  }
+
+  enviarMensajeBringTo(bring: Boolean){
+  this.enviarBringTo.next(bring);
+   }
+
   enviarMensajeDeleteAll() {
     this.enviarDeleteAll.next("CLEARED");
+  }
+
+  enviarMensajeDelete() {
+    this.enviarDelete.next("DELETED");
   }
 
   enviarMensajeSelected(selected: any) {

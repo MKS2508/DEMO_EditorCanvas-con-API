@@ -23,12 +23,15 @@ public EditorLienzoComponent: EditorLienzoComponent
 canvas: fabric.Canvas;
 size: any;
 CanvasFactory: CanvasFactory;
+selected: fabric.Object
   ngOnInit(): void {
     this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService);
     console.warn(this.canvas)
     this.lienzoService.getLienzos().subscribe(data => {this.lienzos = data, console.log(data)});
     console.log(this.lienzos.length)
     this.comunicadorService.enviarSizeObservable.subscribe(data => {console.warn(data.width + "AAAAAAAAAAA"), this.size = data});
+    this.comunicadorService.enviarCanvasObservable.subscribe(data => {console.warn(data), this.canvas = data})
+    this.comunicadorService.enviarSelectedObservable.subscribe(data => {console.warn(data), this.selected = data})
   }
 
   cambioTexto(){
@@ -46,10 +49,30 @@ CanvasFactory: CanvasFactory;
   addFigure(){
     this.comunicadorService.enviarMensaje("ADDED");
   }
-      
+
+
   deleteAll(){
     this.comunicadorService.enviarMensajeDeleteAll();
-    
+  }
+
+  removeSelected(){
+    this.comunicadorService.enviarMensajeDelete();
+  }
+
+  sendToBack(){
+    this.comunicadorService.enviarMensajeBringTo(true)
+  }
+
+  bringToFront(){
+    this.comunicadorService.enviarMensajeBringTo(false)
+  }
+
+  clone(){
+    this.comunicadorService.enviarMensajeClone("CLONED")
+  }
+
+  cleanSelect(){
+    this.comunicadorService.enviarMensajeUnselect("UNSELECTED")
   }
   mensaje:String;
 

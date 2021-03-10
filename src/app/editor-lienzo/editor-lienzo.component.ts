@@ -74,7 +74,7 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
         selectedObject.hasRotatingPoint = true;
         selectedObject.transparentCorners = false;
         selectedObject.cornerColor = "red";
-
+        
         this.resetPanels();
 
         if (selectedObject.type !== "group" && selectedObject) {
@@ -102,12 +102,24 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
 
   actualizar(){
     console.warn("SIZE ES : " + this.size.width)
+
     this.comunicadorService.enviarMensajeSize(this.size)
     this.comunicadorService.enviarMensaje(this.size)
     this.comunicadorService.enviarSizeObservable.subscribe(data => {console.warn(data.width + "edITOR" + this.size.width), this.size = data, this.changeSize()});
     this.comunicadorService.enviarMensajeObservable.subscribe(data => {console.warn(data), this.addFigure()})
     this.comunicadorService.enviarDeleteAllObservable.subscribe(data => {console.warn(data), this.confirmClear()})
-    
+    this.comunicadorService.enviarCloneObservable.subscribe(data =>{console.warn(data), this.clone()})
+    this.comunicadorService.enviarDeleteObservable.subscribe(data => {console.warn(data), this.removeSelected()})
+    this.comunicadorService.enviarBringToObservable.subscribe(data => {console.warn(data), this.bringTo(data)})
+    this.comunicadorService.enviarUnselectObservable.subscribe(data => {console.warn(data), this.cleanSelect()})
+
+  }
+  bringTo(bol: Boolean){
+    if(bol == true){
+      this.sendToBack()
+    } else{
+      this.bringToFront()
+    }
   }
 
   changeSize(): void {
@@ -187,8 +199,17 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
     }
   }
 
+  seleccionado(){
+    this.comunicadorService.enviarSelectedObservable.subscribe(data => {console.warn("SELECCIONADO "+data.id), this.selected = data})
+    this.comunicadorService.enviarMensajeSelected(this.selected)
+  }
+
   //getter y setter
   getId(): void {
+    this.seleccionado()
+    const activeObject = this.canvas.getActiveObject()
+    this.selected = activeObject
+    console.warn("SELCCIONADO"+ activeObject)
     console.log("SIZE DEL CANVAS :" + this.canvas.size());
     this.props.id = this.canvas.getActiveObject().toObject().id;
     this.props.nombre = this.canvas.getActiveObject().toObject().nombre;
