@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { fabric } from "fabric";
+import { CanvasProps } from "../app/CanvasProps";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComunicadorService {
 
+    //BLOQUE 1
   public canvas: fabric.Canvas;
   public selected: fabric.Object;
   public clone: any;
-
   mensaje: String;
+
   private enviarMensajeSubject = new Subject<String>();
   enviarMensajeObservable = this.enviarMensajeSubject.asObservable();
 
@@ -38,6 +40,79 @@ export class ComunicadorService {
   
   private enviarUnselect = new Subject<any>();
   enviarUnselectObservable = this.enviarUnselect.asObservable();
+
+  //BLOQUE 2
+  canvasImage : String
+
+  private enviarCanvasImage = new Subject<string>();
+  enviarImageObservable = this.enviarCanvasImage.asObservable();
+
+  private enviarLoadCanvasFromDB = new Subject<string>();
+  enviarLoadCanvasObs = this.enviarLoadCanvasFromDB.asObservable();
+
+  private enviarSentCanvasToDB = new Subject<string>();
+   enviarSentCanvasObs = this.enviarSentCanvasToDB.asObservable();
+
+  // 3
+  public props: CanvasProps
+  private enviarProps = new Subject<CanvasProps>();
+  enviarPropsObs = this.enviarProps.asObservable();
+
+  private enviarID = new Subject<any>();
+  enviarIDObs = this.enviarID.asObservable();
+
+  private enviarNombre = new Subject<any>();
+  enviarNombreObs = this.enviarNombre.asObservable();
+
+  private enviarFill = new Subject<any>();
+  enviarFillObs = this.enviarFill.asObservable();
+
+  private enviarOpacity = new Subject<any>();
+  enviarOpacityObs = this.enviarOpacity.asObservable();
+  ///
+
+  enviarMensajeID(id){
+    this.enviarID.next(id)
+  }
+
+  enviarMensajeFill(fill){
+    this.enviarFill.next(fill)
+  }
+
+  enviarMensajeOpacity(opacity){
+    this.enviarOpacity.next(opacity)
+  }
+
+  enviarMensajeNombre(nombre){
+    this.enviarNombre.next(nombre)
+  }
+
+  enviarMensajeProps(props: CanvasProps){
+    this.props = props;
+    this.enviarProps.next(props)
+  }
+  /// 
+  enviarMensajeCanvasImage(img:string){
+    this.canvasImage = img;
+    this.enviarCanvasImage.next(img)
+  }
+
+  enviarMensajeLoadCanvas(){
+    this.enviarLoadCanvasFromDB.next("LOADED");
+  }
+
+  
+  enviarMensajeSentCanvas(){
+    this.enviarSentCanvasToDB.next("SAVED");
+  }
+
+
+
+
+  //
+
+  //
+
 
   enviarMensajeUnselect(unselect: String){
     this.enviarUnselect.next(unselect)

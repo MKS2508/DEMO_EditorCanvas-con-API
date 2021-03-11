@@ -3,109 +3,84 @@ import { EditorLienzoComponent } from "../editor-lienzo/editor-lienzo.component"
 // import { OBJETOSPROPS2 } from "./mock-props";
 // import { OBJETOSPROPS } from "./mock-props";
 
-import { CanvasService } from '../canvas.service';
+import { CanvasService } from "../canvas.service";
 import * as fabric from "fabric/fabric-impl";
+import { ComunicadorService } from "../comunicador.service";
+import { CanvasFactory } from "../canvas-factory";
+import { CanvasProps } from "../CanvasProps";
+import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 @Component({
-  selector: 'app-controles-lienzo3',
-  templateUrl: './controles-lienzo3.component.html',
-  styleUrls: ['./controles-lienzo3.component.scss']
+  selector: "app-controles-lienzo3",
+  templateUrl: "./controles-lienzo3.component.html",
+  styleUrls: ["./controles-lienzo3.component.scss"],
 })
 export class ControlesLienzo3Component implements OnInit {
+  public lienzos = []; //lista objetos
 
+  constructor(
+    private lienzoService: CanvasService,
+    private comunicadorService: ComunicadorService
+  ) {}
 
+  canvas: fabric.Canvas;
+  size: any;
+  CanvasFactory: CanvasFactory;
+  selected: fabric.Object;
 
+  id;
+  nombre;
+  opacity;
+  fill;
 
-
-
-  public lienzos = []; //lista objetos 
-
-
-  constructor(private lienzoService : CanvasService){
-  
-  }
   ngOnInit(): void {
-    this.lienzoService.getLienzos().subscribe(data => {this.lienzos = data, console.log(data)});
-    console.log(this.lienzos.length)
-  }
-
-      
-  @ViewChild("canvas", { static: false }) canvas: EditorLienzoComponent;
-
-
-
-
-
-  public loadCanvasFromMocks(mock: string): void{ //METODO PARA PROBAR, **BORRAR DE AQUI**
-
-  console.log("N LIENZOS == "+this.lienzos.length)
-    if (mock === "Aula 1") {
-      this.canvas.loadCanvasFromMocks(this.lienzos);
-    } else if (mock === "Aula 2") {
-      this.canvas.loadCanvasFromMocks(this.lienzos);
-    } else if (mock === "Aula 3") {
-      this.canvas.loadCanvasFromMocks(this.lienzos);
-    }
-  }
-
-  public saveCanvasToDB(): void {
-    this.canvas.saveCanvasToDB();
-  }
-
-  public confirmClear(): void {
-    this.canvas.confirmClear();
-  }
-
-  public changeSize(): void {
-    this.canvas.changeSize();
+    this.comunicadorService.enviarCanvasObservable.subscribe(data => {console.warn(data), this.canvas = data})
+    this.comunicadorService.enviarSelectedObservable.subscribe(data => {console.warn("SELECCIONADO EN CONTROLES"+data.opacity), this.selected = data})
+    this.comunicadorService.enviarIDObs.subscribe(data => {console.warn("ID EN CONTROLES: "+data),this.id = data, this.setIDparam(data)})
+    this.comunicadorService.enviarNombreObs.subscribe(data => {console.warn("NAME EN CONTROLES:" + data), this.nombre = data, this.setNameParam(data)})
+    this.comunicadorService.enviarFillObs.subscribe(data => {console.warn("FILL EN CONTROLES:" + data), this.fill = data, this.setFillParam(data)})
+    this.comunicadorService.enviarOpacityObs.subscribe(data => {console.warn("OPACITY EN CONTROLES:" + data), this.opacity = data, this.setOpacityParam(data)})
   }
 
 
+  setOpacityParam(value: number){
+    this.props.opacity = 1;
+    console.error("OPACITY PROPS "+this.props.opacity)
+  }
+  setFillParam(value: string){
+    this.props.fill = value;
+    console.error("FILL PROPS "+this.props.fill)
 
+  }
+  setNameParam(value: string){
+    console.error("NAME PROPS "+this.props.nombre)
+    this.props.nombre = value;
+  }
+  setIDparam(value: number){
+    console.error("id PROPS "+this.props.id)
+    this.props.id = value;
+  }
+  public props: CanvasProps = { // obj canvas
+    canvasFill: '#ffffff',
+    canvasImage: '',
+    id: 10,
+    nombre: null,
+    opacity: null,
+    fill: null,
+  };
 
-  randomId() {
-    return Math.floor(Math.random() * 999999) + 1;
-  } // 
-
-  public removeSelected(): void {//METODO PARA PROBAR, **BORRAR DE AQUI* 
-    this.canvas.removeSelected();
-    this.lienzos = null;
-    this.lienzoService.getLienzos().subscribe(data => this.lienzos = data);
+  public setId(): void {
+    this.comunicadorService.enviarMensajeID(this.props.id)
   }
 
-  public sendToBack(): void {
-    this.canvas.sendToBack();
+  public setOpacity(): void {
+    this.comunicadorService.enviarMensajeOpacity(1)
   }
 
-  public bringToFront():void {
-    this.canvas.bringToFront();
+  public setName(): void {
+    this.comunicadorService.enviarMensajeNombre(this.props.nombre)
   }
 
-  public clone():void {
-    this.canvas.clone();
+  public setFill(): void {
+    this.comunicadorService.enviarMensajeFill(this.props.fill);
   }
-
-  public cleanSelect():void {
-    this.canvas.cleanSelect();
-  }
-
-  public setCanvasFill():void {
-    this.canvas.setCanvasFill();
-  }
-
-  public setCanvasImage():void {
-    this.canvas.setCanvasImage();
-  }
-
-  public setId():void {
-    this.canvas.setId();
-  }
-
-  public setOpacity():void {
-    this.canvas.setOpacity();
-  }
-
-  public setFill():void {
-    this.canvas.setFill();
-  }
-
 }

@@ -48,6 +48,8 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
 
   public selected: fabric.Object;
 
+  lienzos: any
+
   constructor(
     private lienzoService: CanvasService,
     private ref: ChangeDetectorRef, 
@@ -113,7 +115,18 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
     this.comunicadorService.enviarBringToObservable.subscribe(data => {console.warn(data), this.bringTo(data)})
     this.comunicadorService.enviarUnselectObservable.subscribe(data => {console.warn(data), this.cleanSelect()})
 
+    this.comunicadorService.enviarImageObservable.subscribe(data => {console.warn(data), this.props.canvasImage = data, this.setCanvasImage()})
+    this.comunicadorService.enviarLoadCanvasObs.subscribe(data => {console.warn(data), this.lienzoService.getLienzos().subscribe(data2 => {console.warn(data2),this.lienzos = data2 ,this.loadCanvasFromMocks(this.lienzos)})})
+    this.comunicadorService.enviarSentCanvasObs.subscribe(data => {console.warn(data), this.saveCanvasToDB()})
+
+    this.comunicadorService.enviarIDObs.subscribe(data => {console.warn(data), this.props.id = data, this.setIdParam(data)})
+    this.comunicadorService.enviarNombreObs.subscribe(data => {console.warn(data), this.props.nombre = data, this.setNameParam(data)})
+    this.comunicadorService.enviarFillObs.subscribe(data => {console.warn(data), this.props.fill = data, this.setFillParam(data)})
+    this.comunicadorService.enviarOpacityObs.subscribe(data => {console.warn(data), this.props.opacity = 1, this.setOpacityParam(1)})
+
   }
+
+
   bringTo(bol: Boolean){
     if(bol == true){
       this.sendToBack()
@@ -209,12 +222,25 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
     this.seleccionado()
     const activeObject = this.canvas.getActiveObject()
     this.selected = activeObject
+    this.comunicadorService.enviarMensajeSelected(this.selected)
     console.warn("SELCCIONADO"+ activeObject)
     console.log("SIZE DEL CANVAS :" + this.canvas.size());
     this.props.id = this.canvas.getActiveObject().toObject().id;
     this.props.nombre = this.canvas.getActiveObject().toObject().nombre;
+    this.props.fill = this.canvas.getActiveObject().toObject().fill;
+    this.props.opacity = this.canvas.getActiveObject().toObject().opacity;
+    console.warn("getID OPACITY"+ this.props.opacity)
+    this.setOpacityParam(1)
+    this.setOpacity()
+    this.setFill()
+
     console.log("GET ID ACTIVADO 2 -->" + this.props.id);
     console.log("GET NOMBRE ACTIVADO 2 -->" + this.props.nombre);
+    this.comunicadorService.enviarMensajeID(this.props.id)
+    this.comunicadorService.enviarMensajeNombre(this.props.nombre)
+    this.comunicadorService.enviarMensajeFill(this.props.fill);
+    this.comunicadorService.enviarMensajeOpacity(this.props.opacity);
+    
   }
 
   setId(): void {
@@ -233,6 +259,39 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
     };
   }
 
+  setIdParam(id): void {
+    const valID: number = id;
+    const valNombre: string = this.props.nombre;
+    const valcnv: string = this.props.canvasImage;
+    const complete = this.canvas
+      .getActiveObject()
+      .toObject(["id", "nombre", "cnvIMG"]);
+    console.log(complete);
+    this.canvas.getActiveObject().toObject = () => {
+      complete.id = valID;
+      complete.nombre = valNombre;
+      complete.cnvIMG = valcnv;
+      return complete;
+    };
+  }
+
+  setNameParam(name): void {
+    const valID: number = this.props.id;
+    const valNombre: string = name;
+    const valcnv: string = this.props.canvasImage;
+    const complete = this.canvas
+      .getActiveObject()
+      .toObject(["id", "nombre", "cnvIMG"]);
+    console.log(complete);
+    this.canvas.getActiveObject().toObject = () => {
+      complete.id = valID;
+      complete.nombre = valNombre;
+      complete.cnvIMG = valcnv;
+      return complete;
+    };
+  }
+
+
   getOpacity(): void {
     this.props.opacity = this.getActiveStyle("opacity", null) * 100;
   }
@@ -245,12 +304,24 @@ export class EditorLienzoComponent implements AfterViewInit, OnInit {
     );
   }
 
+  setOpacityParam(opacity): void {
+    this.setActiveStyle(
+      "opacity",
+      parseInt(opacity, 10) ,
+      null
+    );
+  }
+
   getFill(): void {
     this.props.fill = this.getActiveStyle("fill", null);
   }
 
   setFill(): void {
     this.setActiveStyle("fill", this.props.fill, null);
+  }
+
+  setFillParam(fill): void {
+    this.setActiveStyle("fill", fill, null);
   }
 
   removeSelected(): void {
