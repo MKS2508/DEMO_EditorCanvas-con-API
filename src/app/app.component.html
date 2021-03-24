@@ -13,78 +13,78 @@
     <div class="row">
       <div class="col-xl-4 text-center">
 
-
-        <div class="card">
-          <div class="card-header">Tamaño del lienzo</div>
-          <div class="card-body">
-            <div class="form-group">
-              <div class="input-group">
-                <input type="text" class="form-control" [(ngModel)]="canvas.size.width"
-                       (keyup)="changeSize()">
-                <div class="input-group-append">
-                                <span class="input-group-text">
-                                    Anchura del lienzo
-                                </span>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="input-group mb-3">
-                <input type="text" class="form-control" [(ngModel)]="canvas.size.height"
-                       (keyup)="changeSize()">
-                <div class="input-group-append">
-                                <span class="input-group-text">
-                                    Altura del lienzo
-                                </span>
-                </div>
-              </div>
-            </div>
-
-
+<app-controles-lienzo></app-controles-lienzo>
+<!--        <div class="card">-->
+<!--          <div class="card-header">Tamaño del lienzo</div>-->
+<!--          <div class="card-body">-->
+<!--            <div class="form-group">-->
+<!--              <div class="input-group">-->
+<!--                <input type="text" class="form-control" [(ngModel)]="canvas.size.width"-->
+<!--                       (keyup)="changeSize()">-->
+<!--                <div class="input-group-append">-->
+<!--                                <span class="input-group-text">-->
+<!--                                    Anchura del lienzo-->
+<!--                                </span>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--              <div class="input-group mb-3">-->
+<!--                <input type="text" class="form-control" [(ngModel)]="canvas.size.height"-->
+<!--                       (keyup)="changeSize()">-->
+<!--                <div class="input-group-append">-->
+<!--                                <span class="input-group-text">-->
+<!--                                    Altura del lienzo-->
+<!--                                </span>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
 
 
 
 
-          </div>
-          <div class="card">
-            <div class="card-header">Opciones</div>
-            <div class="card-body text-center">
-              <div class="btn-group" role="group" aria-label="...">
-                <button data-toggle="tooltip" data-placement="bottom" title="Delete element" type="button"
-                        class="btn btn-outline-danger" [disabled]="!canvas.selected"
-                        (click)="removeSelected();">
-                  <i class="fa fa-trash" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Send to back" type="button"
-                        class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="sendToBack();">
-                  <i class="fa fa-level-down" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Send to front" type="button"
-                        class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="bringToFront();">
-                  <i class="fa fa-level-up" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Clone" type="button"
-                        class="btn btn-outline-primary"
-                        [disabled]="!canvas.selected || canvas.selected.type == 'group'" (click)="clone();">
-                  <i class="fa fa-clone" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Unselect" type="button"
-                        class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="cleanSelect()">
-                  <i class="fa fa-remove" aria-hidden="true"></i>
-                </button>
 
 
-              </div>
+<!--          </div>-->
+<!--          <div class="card">-->
+<!--            <div class="card-header">Opciones</div>-->
+<!--            <div class="card-body text-center">-->
+<!--              <div class="btn-group" role="group" aria-label="...">-->
+<!--                <button data-toggle="tooltip" data-placement="bottom" title="Delete element" type="button"-->
+<!--                        class="btn btn-outline-danger" [disabled]="!canvas.selected"-->
+<!--                        (click)="removeSelected();">-->
+<!--                  <i class="fa fa-trash" aria-hidden="true"></i>-->
+<!--                </button>-->
+<!--                <button data-toggle="tooltip" data-placement="bottom" title="Send to back" type="button"-->
+<!--                        class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="sendToBack();">-->
+<!--                  <i class="fa fa-level-down" aria-hidden="true"></i>-->
+<!--                </button>-->
+<!--                <button data-toggle="tooltip" data-placement="bottom" title="Send to front" type="button"-->
+<!--                        class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="bringToFront();">-->
+<!--                  <i class="fa fa-level-up" aria-hidden="true"></i>-->
+<!--                </button>-->
+<!--                <button data-toggle="tooltip" data-placement="bottom" title="Clone" type="button"-->
+<!--                        class="btn btn-outline-primary"-->
+<!--                        [disabled]="!canvas.selected || canvas.selected.type == 'group'" (click)="clone();">-->
+<!--                  <i class="fa fa-clone" aria-hidden="true"></i>-->
+<!--                </button>-->
+<!--                <button data-toggle="tooltip" data-placement="bottom" title="Unselect" type="button"-->
+<!--                        class="btn btn-outline-primary" [disabled]="!canvas.selected" (click)="cleanSelect()">-->
+<!--                  <i class="fa fa-remove" aria-hidden="true"></i>-->
+<!--                </button>-->
 
-              <div class="custom-item-title">Controles basicos</div>
 
-              <button data-toggle="tooltip" data-placement="bottom" title="Clean Canvas" type="button"
-                      class="btn btn-danger" (click)="confirmClear();">
-                <i class="fa fa-ban" aria-hidden="true"></i> BORRAR LIENZO</button>
-              <button type="button" class="btn btn-primary" (click)="addFigure();">Agregar rectangulo</button>
-            </div>
-          </div>
-        </div>
+<!--              </div>-->
+
+<!--              <div class="custom-item-title">Controles basicos</div>-->
+
+<!--              <button data-toggle="tooltip" data-placement="bottom" title="Clean Canvas" type="button"-->
+<!--                      class="btn btn-danger" (click)="confirmClear();">-->
+<!--                <i class="fa fa-ban" aria-hidden="true"></i> BORRAR LIENZO</button>-->
+<!--              <button type="button" class="btn btn-primary" (click)="addFigure();">Agregar rectangulo</button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
 
       </div>
       <div class="col-xl-4 text-center">

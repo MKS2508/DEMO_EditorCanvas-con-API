@@ -1,11 +1,11 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
 
-import { ObjProps } from "src/app/obj-props";
+import { ObjProps } from "../obj-props";
 
-import { CanvasProps } from 'src/app/CanvasProps';
-import { CanvasService } from 'src/app/canvas.service';
-import { ComunicadorService } from 'src/app/comunicador.service';
+import { CanvasProps } from '../CanvasProps';
+import { CanvasService } from '../canvas.service';
+import { ComunicadorService } from '../comunicador.service';
 import { EditorLienzoComponent } from '../editor-lienzo/editor-lienzo.component';
 import { CanvasFactory } from '../canvas-factory';
 @Component({
@@ -17,7 +17,7 @@ export class ControlesLienzoComponent implements OnInit {
   // @ViewChild("canvas", { static: false }) htmlCanvas: EditorLienzoComponent;
 
 
-  public lienzos = []; //lista objetos 
+  public lienzos = []; //lista objetos
 
 public EditorLienzoComponent: EditorLienzoComponent
 canvas: fabric.Canvas;
@@ -25,56 +25,63 @@ size: any;
 CanvasFactory: CanvasFactory;
 selected: fabric.Object
   ngOnInit(): void {
+  this.size = {
+    width: 1000,
+    height: 800
+  }
     this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService);
     console.warn(this.canvas)
-    this.lienzoService.getLienzos().subscribe(data => {this.lienzos = data, console.log(data)});
     console.log(this.lienzos.length)
-    this.comunicadorService.enviarSizeObservable.subscribe(data => {console.warn(data.width + "AAAAAAAAAAA"), this.size = data});
-    this.comunicadorService.enviarCanvasObservable.subscribe(data => {console.warn(data), this.canvas = data})
-    this.comunicadorService.enviarSelectedObservable.subscribe(data => {console.warn(data), this.selected = data})
+    this.comunicadorService.recibirCanvasObs.subscribe(data =>
+    {
+      console.error(data)
+      this.canvas = data;
+      this.selected = data.getActiveObject();
+    })
   }
 
-  cambioTexto(){
-    this.comunicadorService.enviarMensaje("ADDED");
-  }
-
-  cambioTexto2(){
-    this.comunicadorService.enviarMensaje("MENSAJE2");
-  }
 
   changeSize(){
-    this.comunicadorService.enviarMensajeSize(this.size)
-  }
-  
+this.canvas.setWidth(this.size.width)
+this.canvas.setHeight(this.size.height);
+this.comunicadorService.enviarCanvas(this.canvas)
+}
+
   addFigure(){
-    this.comunicadorService.enviarMensaje("ADDED");
-  }
+this.CanvasFactory.addFigure()
+}
 
 
   deleteAll(){
-    this.comunicadorService.enviarMensajeDeleteAll();
-  }
+    this.CanvasFactory.confirmClear();
+
+  this.comunicadorService.enviarCanvas(this.canvas)
+}
 
   removeSelected(){
-    this.comunicadorService.enviarMensajeDelete();
+
+    console.error("remove")
+    this.CanvasFactory.removeSelected()
   }
 
   sendToBack(){
-    this.comunicadorService.enviarMensajeBringTo(true)
+    this.CanvasFactory.sendToBack()
   }
 
   bringToFront(){
-    this.comunicadorService.enviarMensajeBringTo(false)
+    this.CanvasFactory.bringToFront()
   }
 
   clone(){
-    this.comunicadorService.enviarMensajeClone("CLONED")
+    this.CanvasFactory.clone()
   }
 
   cleanSelect(){
-    this.comunicadorService.enviarMensajeUnselect("UNSELECTED")
+    this.canvas.discardActiveObject().renderAll();
+    this.CanvasFactory.cleanSelect()
   }
   mensaje:String;
+
 
   public props: CanvasProps = { // obj canvas
     canvasFill: '#ffffff',
@@ -83,7 +90,25 @@ selected: fabric.Object
     nombre: null,
     opacity: null,
     fill: null,
+    idCTRCentro:''
   };
+
+  private objeto1: ObjProps = { //objBD
+    id: 0,
+    nombre: 'a',
+    lienzo: '',
+    width: 0,
+    height: 0,
+    left_canvas: 0,
+    top_canvas: 0,
+    angle: 0,
+    fill: '#ffffff',
+    opacity: 0,
+    idCTRCentro:'',
+
+    scaleX: 1,
+    scaleY:1
+  }
 
 
   constructor(private lienzoService : CanvasService, private ref: ChangeDetectorRef, private comunicadorService: ComunicadorService){}

@@ -18,11 +18,11 @@ import { ControlesLienzo3Component } from './controles-lienzo3/controles-lienzo3
     AppComponent,
     EditorLienzoComponent,
     MenuCentroComponent,
+
+    ControlesLienzoComponent,
   ],
   imports: [
-    ControlesLienzo2Component,
-    ControlesLienzo3Component,
-    ControlesLienzoComponent,
+
     BrowserModule,
     FormsModule,
     ColorPickerModule,

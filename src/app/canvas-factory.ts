@@ -17,6 +17,7 @@ import { ComunicadorService } from "./comunicador.service";
 
 export class CanvasFactory implements OnInit {
 
+
   public canvas: fabric.Canvas;
   @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
   editorlienzo:EditorLienzoComponent;
@@ -467,5 +468,100 @@ export class CanvasFactory implements OnInit {
     //Actualizar el canvas despues de cada cambio
     this.comunicadorService.enviarCanvas(this.canvas);
   } // update
+
+  confirmClear(): void {
+    if (confirm('Se va a eliminar el lienzo')) {
+      this.canvas.clear();
+    }
+    this.comunicadorService.enviarCanvas(this.canvas)
+  }
+
+  cleanSelect() {
+    this.canvas.discardActiveObject().renderAll();
+    this.comunicadorService.enviarCanvas(this.canvas)
+
+  }
+
+  removeSelected() {
+    const activeObject = this.canvas.getActiveObject();
+    const activeGroup = this.canvas.getActiveObjects();
+    const activeId = this.canvas.getActiveObject().toDatalessObject(["id", "nombre", "CNVIMG"]).id;
+    if (activeObject) {
+      this.canvas.remove(activeObject);
+      // this.textString = '';
+    } else if (activeGroup) {
+      this.canvas.discardActiveObject();
+      const self = this;
+      activeGroup.forEach((object) => {
+        self.canvas.remove(object);
+      });
+    }
+    this.deleteCanvasFromDB(activeId);
+    this.comunicadorService.enviarCanvas(this.canvas)
+
+  }
+  sendToBack() {
+    const activeObject = this.canvas.getActiveObject();
+    const activeGroup = this.canvas.getActiveObjects();
+
+    if (activeObject) {
+      this.canvas.sendToBack(activeObject);
+      activeObject.sendToBack();
+      activeObject.opacity = 1;
+    } else if (activeGroup) {
+      this.canvas.discardActiveObject();
+      activeGroup.forEach((object) => {
+        object.sendToBack();
+      });
+      this.comunicadorService.enviarCanvas(this.canvas)
+
+    }  }
+  bringToFront() {
+    const activeObject = this.canvas.getActiveObject();
+    const activeGroup = this.canvas.getActiveObjects();
+
+    if (activeObject) {
+      activeObject.bringToFront();
+      activeObject.opacity = 1;
+    } else if (activeGroup) {
+      this.canvas.discardActiveObject();
+      activeGroup.forEach((object) => {
+        object.bringToFront();
+      });
+      this.comunicadorService.enviarCanvas(this.canvas)
+
+    }  }
+  clone() {
+    const activeObject = this.canvas.getActiveObject();
+    const activeGroup = this.canvas.getActiveObjects();
+
+    if (activeObject) {
+      let clone;
+      switch (activeObject.type) {
+        case 'rect':
+          clone = new fabric.Rect(activeObject.toObject());
+          break;
+        case 'circle':
+          clone = new fabric.Circle(activeObject.toObject());
+          break;
+        case 'triangle':
+          clone = new fabric.Triangle(activeObject.toObject());
+          break;
+        case 'i-text':
+          clone = new fabric.IText('', activeObject.toObject());
+          break;
+        case 'image':
+          clone = fabric.util.object.clone(activeObject);
+          break;
+      }
+      if (clone) {
+        clone.set({left: 10, top: 10});
+        this.canvas.add(clone);
+        this.selectItemAfterAdded(clone);
+      }
+      this.comunicadorService.enviarCanvas(this.canvas)
+    }
+
+  }
 
 }

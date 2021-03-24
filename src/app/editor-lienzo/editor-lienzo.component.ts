@@ -407,11 +407,7 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     }
   }// el contrario del metodo anterior
 
-  confirmClear(): void {
-    if (confirm('Se va a eliminar el lienzo')) {
-      this.canvas.clear();
-    }
-  }
+
 
   //limpia el lienzo entero, no los borra de la bd
 
@@ -486,7 +482,7 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
   loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps):void {
 
     var longitudObjetos = mock.length;
-    this.confirmClear();
+    this.CanvasFactory.confirmClear();
 
     for (var i = 0; i <= longitudObjetos - 1; i++) {
         this.addFigureParam(
