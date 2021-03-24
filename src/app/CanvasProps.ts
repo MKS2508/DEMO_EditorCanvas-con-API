@@ -5,5 +5,7 @@ export interface CanvasProps {
     canvasImage: string;
     canvasFill: string,
     fill: string;
+   idCTRCentro:string
+
 
 }

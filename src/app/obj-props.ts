@@ -9,7 +9,8 @@ export interface ObjProps {
     angle: number;
     fill: string;
     opacity: number;
-    canvasImage: string;
-    cnvIMG: String;
+    idCTRCentro: string;
+    scaleX: number;
+    scaleY: number;
 
 }

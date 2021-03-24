@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { EditorLienzoComponent } from "../app/editor-lienzo/editor-lienzo.component";
+import { MenuCentroComponent} from "./menu-centro/menu-centro.component";
 // import { OBJETOSPROPS2 } from "./mock-props";
 // import { OBJETOSPROPS } from "./mock-props";
 
 import { CanvasService } from './canvas.service';
+import {CentroProps} from "./centro-props";
+import {ComunicadorService} from "./comunicador.service";
 
 @Component({
   selector: "app-root",
@@ -13,18 +16,37 @@ import { CanvasService } from './canvas.service';
 export class AppComponent implements OnInit{
   title = "angular-editor-fabric-js";
 
-  public lienzos = []; //lista objetos 
+  public lienzos = []; //lista objetos
+  public centro: CentroProps
+  public mostrar: boolean;
+  public centroSeleccionadoID: number;
 
-
-  constructor(private _lienzoService : CanvasService){
-  
+  constructor(private _lienzoService : CanvasService, private comunicadorService: ComunicadorService){
+  this.mostrar = false;
   }
   ngOnInit(): void {
-    this._lienzoService.getLienzos().subscribe(data => {this.lienzos = data, console.log(data)});
-    console.log(this.lienzos.length)
+    console.warn(this.lienzos.length)
+    this.comunicadorService.recibirMostrarObs.subscribe(data => {this.mostrar = data; console.warn(data)})
+    this.comunicadorService.recibirCentroObs.subscribe(data => {this.centroSeleccionadoID = data;
+
+      this._lienzoService.getCentro(this.centroSeleccionadoID).subscribe(data => {
+        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+        this.lienzos = data.aulas;
+        this.centro = data;
+
+        for (let i = 0; i <= this.lienzos.length - 1; i++) {
+          this.lienzos[i].idCTRCentro = data.id;
+
+        }
+        this.canvas.loadCanvasFromMocks(this.lienzos, this.centro);
+        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+
+      });
+
+    })
   }
 
-      
+
   @ViewChild("canvas", { static: false }) canvas: EditorLienzoComponent;
 
 
@@ -34,14 +56,39 @@ export class AppComponent implements OnInit{
   public loadCanvasFromMocks(mock: string): void{ //METODO PARA PROBAR, **BORRAR DE AQUI**
 
   console.log("N LIENZOS == "+this.lienzos.length)
-    if (mock === "Aula 1") {
-      this.canvas.loadCanvasFromMocks(this.lienzos);
-    } else if (mock === "Aula 2") {
-      this.canvas.loadCanvasFromMocks(this.lienzos);
-    } else if (mock === "Aula 3") {
-      this.canvas.loadCanvasFromMocks(this.lienzos);
-    }
+    if (mock === "Centro 1") {
+      this._lienzoService.getCentro(999).subscribe(data => {
+        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+          this.lienzos = data.aulas;
+          this.centro = data;
+
+        for (let i = 0; i <= this.lienzos.length - 1; i++) {
+          this.lienzos[i].idCTRCentro = data.id;
+
+      }
+        this.canvas.loadCanvasFromMocks(this.lienzos, this.centro);
+        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+
+
+      });
+
+    } else if (mock === "Centro 2"){
+      this._lienzoService.getCentro(888).subscribe(data => {
+        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+        this.lienzos = data.aulas;
+        this.centro = data;
+
+        for (let i = 0; i <= this.lienzos.length - 1; i++) {
+          this.lienzos[i].idCTRCentro = data.id;
+
+        }
+        this.canvas.loadCanvasFromMocks(this.lienzos, this.centro);
+        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+    });}
+
   }
+
+
 
   public saveCanvasToDB(): void {
     this.canvas.saveCanvasToDB();
@@ -59,10 +106,10 @@ export class AppComponent implements OnInit{
     this.canvas.addFigure();
   }
 
-  public removeSelected(): void {//METODO PARA PROBAR, **BORRAR DE AQUI* 
+  public removeSelected(): void {//METODO PARA PROBAR, **BORRAR DE AQUI*
     this.canvas.removeSelected();
     this.lienzos = null;
-    this._lienzoService.getLienzos().subscribe(data => this.lienzos = data);
+    // this._lienzoService.getLienzos().subscribe(data => this.lienzos = data);
   }
 
   public sendToBack(): void {

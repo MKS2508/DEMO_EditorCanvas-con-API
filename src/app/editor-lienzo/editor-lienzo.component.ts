@@ -1,20 +1,38 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import {Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef, OnInit} from '@angular/core';
 import { fabric } from 'fabric';
 
-import { ObjProps } from "src/app/obj-props";
+import { ObjProps } from "../obj-props";
 
-import { CanvasProps } from 'src/app/CanvasProps';
-import { CanvasService } from 'src/app/canvas.service';
+import { CanvasProps } from '../CanvasProps';
+import { CanvasService } from '../canvas.service';
+import {CentroProps} from "../centro-props";
+import { CanvasFactory } from "../canvas-factory";
+import {ComunicadorService} from "../comunicador.service";
 
 @Component({
   selector: 'app-editor-lienzo',
   templateUrl: './editor-lienzo.component.html',
   styleUrls: ['./editor-lienzo.component.scss'],
 })
-export class EditorLienzoComponent implements AfterViewInit {
+export class EditorLienzoComponent implements AfterViewInit, OnInit {
+
+
+  ngOnInit(): void {
+
+this.comunicadorService.recibirCanvasObs.subscribe(data => {
+  this.canvas = data;
+  console.warn("Canvas recibido en editorLienzo: "+'/n'+this.canvas)
+  this.selected = this.canvas.getActiveObject()
+
+
+});    }
+
   @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
 
-  private canvas: fabric.Canvas;
+
+
+  public canvas: fabric.Canvas;
+  CanvasFactory: CanvasFactory = new CanvasFactory(this._lienzoService, this.comunicadorService);
 
   public props: CanvasProps = { // obj canvas
     canvasFill: '#ffffff',
@@ -23,6 +41,7 @@ export class EditorLienzoComponent implements AfterViewInit {
     nombre: null,
     opacity: null,
     fill: null,
+    idCTRCentro:''
   };
 
   private objeto1: ObjProps = { //objBD
@@ -30,15 +49,19 @@ export class EditorLienzoComponent implements AfterViewInit {
     nombre: 'a',
     lienzo: '',
     width: 0,
-    height:0,
-    left_canvas:0,
-    top_canvas:0,
-    angle:0,
-    fill:'#ffffff',
-    opacity:0, 
-    canvasImage:'', 
-    cnvIMG: ''
+    height: 0,
+    left_canvas: 0,
+    top_canvas: 0,
+    angle: 0,
+    fill: '#ffffff',
+    opacity: 0,
+    idCTRCentro:'',
+
+    scaleX: 1,
+    scaleY:1
   }
+
+  private objCentro: CentroProps;
 
   public url: string | ArrayBuffer = '';
   public size: any = {
@@ -48,10 +71,11 @@ export class EditorLienzoComponent implements AfterViewInit {
 
   public textEditor: boolean = false;
   public figureEditor: boolean = false;
-  
+
   public selected: fabric.Object;
 
-  constructor(private _lienzoService : CanvasService, private ref: ChangeDetectorRef){}
+  constructor(private _lienzoService: CanvasService, private ref: ChangeDetectorRef, private comunicadorService: ComunicadorService) {
+  }
 
   ngAfterViewInit(): void {
 
@@ -63,8 +87,15 @@ export class EditorLienzoComponent implements AfterViewInit {
     });
 
     this.canvas.on({
-      'object:moving': (e) => { },
-      'object:modified': (e) => { },
+      'object:moving': (e) => {
+      },
+      'object:modified': (e) => {
+        const selectedObject = e.target;
+        this.selected = selectedObject;
+        console.warn(selectedObject.toObject())
+
+
+      },
       'object:selected': (e) => {
         const selectedObject = e.target;
         this.selected = selectedObject;
@@ -78,11 +109,15 @@ export class EditorLienzoComponent implements AfterViewInit {
 
           this.getId();
           this.getOpacity();
+          console.warn(selectedObject.toObject().width)
         }
+
+        this.comunicadorService.enviarCanvas(this.canvas)
       },
       'selection:cleared': (e) => {
         this.selected = null;
         this.resetPanels();
+
       }
     });
 
@@ -93,7 +128,8 @@ export class EditorLienzoComponent implements AfterViewInit {
     this.canvas.on('mouse:down', (e) => {
       const canvasElement: any = document.getElementById('canvas');
     });
-
+    //enviar el canvas
+    this.comunicadorService.enviarCanvas(this.canvas);
   }
 
   changeSize(): void { // tamanio canvas
@@ -102,55 +138,20 @@ export class EditorLienzoComponent implements AfterViewInit {
   }
 
   addFigure(): void { // agregar rectangulo nuevo
-    let add: any;
-      add = new fabric.Rect({
-          width: 200, height: 100, left: 10, top: 10, angle: 0,
-          fill: '#3f51b5'
-      });
-    var randomizedId: number = this.randomId();
-    this.extend(add, randomizedId, 'a'+randomizedId, this.props.canvasImage);
-    this.canvas.add(add);
-    this.selectItemAfterAdded(add);
-    console.log("ADDFIG "+ this.props.canvasImage);
+    // agregar rectangulo nuevo
+    this.CanvasFactory.addFigure();
   }
 
-  addFigureParam ( // agregar figura guardada
-    idParam:number,
-    nombreParam:string,
-    widthParam:number,
-    heightParam:number,
-    leftParam:number,
-    topParam:number,
-    angleParam:number,
-    fillParam:string,
-    opacityParam:number,
-    canvImageParam:string
+  addFigureParam(objProps: ObjProps
   ): void {
-    let add: any;
-  
-    var rect = new fabric.Rect({
-      width: widthParam,
-      height: heightParam,
-      left: leftParam,
-      top: topParam,
-      angle: angleParam,
-      fill: fillParam,
-      opacity: opacityParam,
-    });
-  
-    this.extend(rect, idParam, nombreParam, canvImageParam);
-  
-    this.canvas.add(rect);
-    this.canvas.renderAll();
-    this.setCanvasImage();
-    this.selectItemAfterAdded(rect);
+ this.CanvasFactory.addFigureParam(objProps)
   }
 
   cleanSelect(): void {
     this.canvas.discardActiveObject().renderAll();
   } //des-seleccion
 
-  selectItemAfterAdded(obj):void {
+  selectItemAfterAdded(obj): void {
     this.canvas.discardActiveObject().renderAll();
     this.canvas.setActiveObject(obj);
   }//se utiliza despues de pintar un obj
@@ -162,44 +163,43 @@ export class EditorLienzoComponent implements AfterViewInit {
     }
   } // color relleno
 
-  extend(obj:any, id:number, nombre: string, cnvIMG:string): void{
+  extend(obj: any, id: number, nombre: string, idCTRCentro: string): void {
     obj.toObject = (function (toObject): any {
       return function () {
         return fabric.util.object.extend(toObject.call(this), {
           id: id,
           nombre: nombre,
-          cnvIMG: cnvIMG
+          idCTRCentro: idCTRCentro
         });
       };
     })(obj.toObject);
     obj.id = id;
     obj.nombre = nombre;
-    cnvIMG = this.props.canvasImage;
-    obj.cnvIMG = cnvIMG;
+    idCTRCentro = this.props.idCTRCentro;
   } // este metodo extiende el objeto del canvas con los parametros extra (ID, name...)
 
-  setCanvasImage(): void{
+  setCanvasImage(): void {
     const self = this;
     if (this.props.canvasImage) {
-      this.canvas.setBackgroundColor(new fabric.Pattern({ source: this.props.canvasImage, repeat: 'repeat' }), () => {
+      this.canvas.setBackgroundColor(new fabric.Pattern({source: this.props.canvasImage, repeat: 'repeat'}), () => {
         self.props.canvasFill = '';
         self.canvas.renderAll();
       });
     }
     this.canvas.renderAll();
-    console.log("CANVASIMG " +this.props.canvasImage);
+    console.log("CANVASIMG " + this.props.canvasImage);
     this.canvas.setWidth(0);
     this.canvas.setWidth(1140);
     this.ref.detectChanges()
   } // este metodo settea la imagen de fondo del lienzo
-  
-  setCanvasImageParam(cnvImg: string): void{
+
+  setCanvasImageParam(cnvImg: string): void {
     const self = this;
- 
-      this.canvas.setBackgroundColor(new fabric.Pattern({ source: cnvImg, repeat: 'repeat' }), () => {
-        self.props.canvasFill = '';
-        self.canvas.renderAll();
-      });
+
+    this.canvas.setBackgroundColor(new fabric.Pattern({source: cnvImg, repeat: 'repeat'}), () => {
+      self.props.canvasFill = '';
+      self.canvas.renderAll();
+    });
     this.props.canvasImage = cnvImg;
     this.canvas.renderAll();
     console.log("CANVASIMG");
@@ -210,11 +210,13 @@ export class EditorLienzoComponent implements AfterViewInit {
   randomId() {
     return Math.floor(Math.random() * 999999) + 1;
   } // genera id aleatorio
-  
+
 //getter y setter estilo canvas
   getActiveStyle(styleName, object): any {
     object = object || this.canvas.getActiveObject();
-    if (!object) { return ''; }
+    if (!object) {
+      return '';
+    }
 
     if (object.getSelectionStyles && object.isEditing) {
       return (object.getSelectionStyles()[styleName] || '');
@@ -223,9 +225,11 @@ export class EditorLienzoComponent implements AfterViewInit {
     }
   }
 
-  setActiveStyle(styleName, value: string | number, object: fabric.IText):void  {
+  setActiveStyle(styleName, value: string | number, object: fabric.IText): void {
     object = object || this.canvas.getActiveObject() as fabric.IText;
-    if (!object) { return; }
+    if (!object) {
+      return;
+    }
 
     if (object.setSelectionStyles && object.isEditing) {
       const style = {};
@@ -257,7 +261,7 @@ export class EditorLienzoComponent implements AfterViewInit {
     } else {
       if (typeof value === 'string') {
         if (value.includes('underline')) {
-        object.set('underline', true);
+          object.set('underline', true);
         } else {
           object.set('underline', false);
         }
@@ -307,55 +311,58 @@ export class EditorLienzoComponent implements AfterViewInit {
           break;
       }
       if (clone) {
-        clone.set({ left: 10, top: 10 });
+        clone.set({left: 10, top: 10});
         this.canvas.add(clone);
         this.selectItemAfterAdded(clone);
       }
     }
   }
+
 //getter y setter
-  getId(): void{
-    console.log('SIZE DEL CANVAS :'+this.canvas.size());
+  getId(): void {
+    console.log('SIZE DEL CANVAS :' + this.canvas.size());
     this.props.id = this.canvas.getActiveObject().toObject().id;
     this.props.nombre = this.canvas.getActiveObject().toObject().nombre;
+    console.warn(this.canvas.getActiveObject().toObject().width)
+
     console.log("GET ID ACTIVADO 2 -->" + this.props.id);
     console.log("GET NOMBRE ACTIVADO 2 -->" + this.props.nombre);
   }
-  
-  setId(): void{
-    const valID:number = this.props.id;
-    const valNombre:string = this.props.nombre;
-    const valcnv:string = this.props.canvasImage;
-    const complete = this.canvas.getActiveObject().toObject(["id", "nombre","cnvIMG"]);
+
+  setId(): void {
+    const valID: number = this.props.id;
+    const valNombre: string = this.props.nombre;
+    const valcnv: string = this.props.canvasImage;
+    const complete = this.canvas.getActiveObject().toObject(["id", "nombre", "cnvIMG"]);
     console.log(complete);
     this.canvas.getActiveObject().toObject = () => {
       complete.id = valID;
       complete.nombre = valNombre;
-      complete.cnvIMG =  valcnv;
+      complete.cnvIMG = valcnv;
       return complete;
     };
   }
 
-  getOpacity():void {
+  getOpacity(): void {
     this.props.opacity = this.getActiveStyle('opacity', null) * 100;
   }
 
-  setOpacity():void {
+  setOpacity(): void {
     this.setActiveStyle('opacity', parseInt(this.props.opacity, 10) / 100, null);
   }
 
-  getFill():void {
+  getFill(): void {
     this.props.fill = this.getActiveStyle('fill', null);
   }
 
-  setFill():void {
+  setFill(): void {
     this.setActiveStyle('fill', this.props.fill, null);
   }
 
-  removeSelected():void {
+  removeSelected(): void {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
-    const activeId = this.canvas.getActiveObject().toDatalessObject(["id","nombre","CNVIMG"]).id;
+    const activeId = this.canvas.getActiveObject().toDatalessObject(["id", "nombre", "CNVIMG"]).id;
     if (activeObject) {
       this.canvas.remove(activeObject);
       // this.textString = '';
@@ -366,10 +373,10 @@ export class EditorLienzoComponent implements AfterViewInit {
         self.canvas.remove(object);
       });
     }
-   this.deleteCanvasFromDB(activeId);
+    this.deleteCanvasFromDB(activeId);
   } // eliminar bd el seleccionado
 
-  bringToFront():void {
+  bringToFront(): void {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
 
@@ -384,7 +391,7 @@ export class EditorLienzoComponent implements AfterViewInit {
     }
   }//traer figura al frente, superponer encima de otra
 
-  sendToBack(): void{
+  sendToBack(): void {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
 
@@ -400,14 +407,15 @@ export class EditorLienzoComponent implements AfterViewInit {
     }
   }// el contrario del metodo anterior
 
-  confirmClear():void {
+  confirmClear(): void {
     if (confirm('Se va a eliminar el lienzo')) {
       this.canvas.clear();
     }
   }
+
   //limpia el lienzo entero, no los borra de la bd
 
-  resetPanels():void {
+  resetPanels(): void {
     this.figureEditor = false;
   }
 
@@ -416,91 +424,92 @@ export class EditorLienzoComponent implements AfterViewInit {
     nombre: 'a',
     lienzo: '',
     width: 0,
-    height:0,
-    left_canvas:0,
-    top_canvas:0,
-    angle:0,
-    fill:'#ffffff',
-    opacity:0, 
-    canvasImage:'',
-    cnvIMG:''
+    height: 0,
+    left_canvas: 0,
+    top_canvas: 0,
+    angle: 0,
+    fill: '#ffffff',
+    opacity: 0,
+    idCTRCentro:'',
+    scaleX: 1,
+    scaleY: 1
   }
 
   findByID(id: string): boolean {
-    console.log("OBJETO FIND "+id)
+    console.log("OBJETO FIND " + id)
     this._lienzoService.findLienzo(id).subscribe(data => this.objeto2 = data);
-    console.log("OBJETO FIND "+this.objeto2.id + "DATA "+ this.objeto2.id);
-    if (this.objeto2.id != 0){
+    console.log("OBJETO FIND " + this.objeto2.id + "DATA " + this.objeto2.id);
+    if (this.objeto2.id != 0) {
       return true;
     } else {
       return false;
     }
   } // encontrar por id, comprobar si existe
-
   saveCanvasToDB(): void{
 
     var sizeCanvas = this.canvas.size();
     let arrayProps = [];
-  
+
     // this.canvas.clear();
     for (var i = 0; i <= sizeCanvas - 1; i++) {
       var item = this.canvas.item(i).toDatalessObject(["id", "nombre","cnvIMG"]);
       item.canvasImage = item.cnvIMG;
-      console.log("MEDIO "+item.canvasImage);
+      console.log("MEDIO "+item.width);
+      item.left_canvas = item.left;
+      item.top_canvas = item.top;
       if(this.findByID(item.id) === true){//si el canvas existe, actualiza, si se cambia el id, borra y pinta
         this.updateCanvasFromDB(item);
         console.log("EXISTE, ACTUALIZANDO")
       } else{
+
         this._lienzoService.postLienzo(item).subscribe(data => console.log(data));
         console.log("NO EXISTE, CREANDO")
 
       }
+      this._lienzoService.addToCentro(999,item.id).subscribe(data => console.log(data))
+
     }
-    
-  }//guardar en bd
+
+  }
 
   deleteCanvasFromDB(id:number): void{
 
-      this._lienzoService.deleteLienzo(id).subscribe(data => console.log("OBJETO CON ID: "+id + "ELIMINADO DE LA BD ----- "+data)); 
+      this._lienzoService.deleteLienzo(id).subscribe(data => console.log("OBJETO CON ID: "+id + "ELIMINADO DE LA BD ----- "+data));
 
   } //eliminar elemento de la bd, se llama desde removeSelected
 
   updateCanvasFromDB(Object:ObjProps): void{
-    this._lienzoService.updateLienzo(Object).subscribe(data => console.log("OBJETO CON ID: "+Object.id + "ACTUALIZADO DE LA BD ----- "+data)); 
-} // update
-  
-  
-  loadCanvasFromMocks(mock: ObjProps[]):void {
+    this._lienzoService.updateLienzo(Object).subscribe(data => console.log("OBJETO CON ID: "+Object.id + "ACTUALIZADO DE LA BD ----- "+data));
+  } // update
+
+
+  loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps):void {
 
     var longitudObjetos = mock.length;
     this.confirmClear();
 
     for (var i = 0; i <= longitudObjetos - 1; i++) {
         this.addFigureParam(
-        mock[i].id,
-        mock[i].nombre,
-        mock[i].width,
-        mock[i].height,
-        mock[i].left_canvas,
-        mock[i].top_canvas,
-        mock[i].angle,
-        mock[i].fill,
-        mock[i].opacity,
-        mock[i].canvasImage
-        
+        mock[i]
+
       );
-      console.log('cnvimg'+mock[i].canvasImage);
-      this.canvas.item(0).toDatalessObject().canvasImage = mock[i].canvasImage ;
       console.log('cnvimg'+this.canvas.item(0).toDatalessObject().canvasImage);
-      this.setCanvasImageParam(mock[i].canvasImage);
-      this.props.canvasImage = mock[i].canvasImage;
+      this.setCanvasImageParam(centro.canvasImage);
       console.log('propsIMG  '+this.props.canvasImage);
       this.setCanvasImage();
       this.canvas.renderAll();
       this.selectItemAfterAdded(this.canvas.item(0));
-    }    
-    this.canvas.setWidth(0);
-    this.canvas.setWidth(1140);
+
+    }
+    console.log(centro.width +' - - '+ this.size.width)
+    this.size.width = centro.width;
+    this.size.height = centro.height;
+    console.log(centro.width +' - - '+ this.size.width)
+    this.canvas.setWidth(centro.height);
+    this.setCanvasImageParam(centro.canvasImage);
     this.ref.detectChanges()
+    this.objCentro = centro;
+    console.error(centro.aulas)
+    console.error(this.objCentro.aulas)
   } // cargar desde bd
 }
