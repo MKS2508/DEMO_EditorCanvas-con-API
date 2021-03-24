@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import{ BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { HttpClient, HttpClientModule } from  '@angular/common/http'
@@ -20,6 +20,8 @@ import { ControlesLienzo3Component } from './controles-lienzo3/controles-lienzo3
     MenuCentroComponent,
 
     ControlesLienzoComponent,
+    ControlesLienzo2Component,
+
   ],
   imports: [
 

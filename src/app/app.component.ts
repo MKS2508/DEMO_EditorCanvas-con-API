@@ -95,7 +95,7 @@ export class AppComponent implements OnInit{
   }
 
   public confirmClear(): void {
-    this.canvas.confirmClear();
+    // this.canvas.confirmClear();
   }
 
   public changeSize(): void {

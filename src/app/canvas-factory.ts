@@ -14,9 +14,14 @@ import { CanvasProps } from "./CanvasProps";
 import { CanvasService } from "./canvas.service";
 import { EditorLienzoComponent } from "./editor-lienzo/editor-lienzo.component";
 import { ComunicadorService } from "./comunicador.service";
+import {CentroProps} from "./centro-props";
 
 export class CanvasFactory implements OnInit {
 
+  public centro: CentroProps = {
+    aulas: [], canvasImage: "", height: 1000, id: 0, idCTRSede: "", width: 100
+
+  }
 
   public canvas: fabric.Canvas;
   @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
@@ -36,6 +41,7 @@ export class CanvasFactory implements OnInit {
   seleccionado: String = "object:selected";
   movimiento: String = "object:moving";
 
+  public arrayProps: ObjProps[] = []
   public objetoBD: ObjProps = {
     //objBD
     id: 0,
@@ -71,7 +77,21 @@ export class CanvasFactory implements OnInit {
     idCTRCentro:'999'
   };
   public selected: fabric.Object;
-
+  private objeto2: ObjProps = { //objFind
+    id: 0,
+    nombre: 'a',
+    lienzo: '',
+    width: 0,
+    height: 0,
+    left_canvas: 0,
+    top_canvas: 0,
+    angle: 0,
+    fill: '#ffffff',
+    opacity: 0,
+    idCTRCentro:'',
+    scaleX: 1,
+    scaleY: 1
+  }
   constructor(private lienzoService: CanvasService, private comunicadorService: ComunicadorService) {
 
       this.size = {
@@ -79,44 +99,44 @@ export class CanvasFactory implements OnInit {
       height: 800,
     };
     console.warn(this.canvas)
-    //
-    // this.canvas.on({
-    //   'object:moving': (e) => {
-    //   },
-    //   'object:modified': (e) => {
-    //     const selectedObject = e.target;
-    //     this.selected = selectedObject;
-    //     console.warn(selectedObject.toObject())
-    //
-    //   },
-    //   'object:selected': (e) => {
-    //     const selectedObject = e.target;
-    //     this.selected = selectedObject;
-    //     selectedObject.hasRotatingPoint = true;
-    //     selectedObject.transparentCorners = false;
-    //     selectedObject.cornerColor = 'red';
-    //
-    //     this.resetPanels();
-    //
-    //     if (selectedObject.type !== 'group' && selectedObject) {
-    //
-    //       this.getId();
-    //       this.getOpacity();
-    //       console.warn(selectedObject.toObject().width)
-    //     }
-    //   },
-    //   'selection:cleared': (e) => {
-    //     this.selected = null;
-    //     this.resetPanels();
-    //   }
-    // });
 
 
 
     this.comunicadorService.recibirCanvasObs.subscribe(data => {
       this.canvas = data;
-      console.warn("Canvas recibido en CanvasFactory: "+'/n'+this.canvas)
+      console.warn(data)
       this.selected = this.canvas.getActiveObject();
+
+      this.arrayProps = [];
+      for(var i = 0; i <=       this.canvas.size()-1; i++){
+          // this.objetoBD = null;
+
+        console.log(data._objects[i].toObject())
+        this.objetoBD.id = data._objects[i].toObject().id;
+        console.log(this.objetoBD)
+
+        this.objetoBD.nombre = data._objects[i].toObject().nombre;
+        this.objetoBD.width = data._objects[i].toObject().width;
+
+        this.objetoBD.height = data._objects[i].toObject().height;
+        this.objetoBD.scaleX = data._objects[i].toObject().scaleX;
+        this.objetoBD.scaleY =  data._objects[i].toObject().scaleY;
+        this.objetoBD.idCTRCentro  =  data._objects[i].toObject().idCTRCentro;
+        this.objetoBD.angle  =  data._objects[i].toObject().angle;
+        this.objetoBD.fill   =  data._objects[i].toObject().fill;
+        this.objetoBD.opacity  =  data._objects[i].toObject().opacity;
+        this.objetoBD.left_canvas  =  data._objects[i].toObject().left;
+        this.objetoBD.top_canvas  =  data._objects[i].toObject().top;
+        let clone = {...this.objetoBD};
+
+        this.arrayProps.push(clone)
+        this.arrayProps.length
+
+        console.log('---------------------------------------'+         this.arrayProps.length
+        )
+
+        // this.objetoBD.id = this.canvas.
+      }
     });    }
   ngOnInit(): void {
     console.log("FUNCIONA")
@@ -481,6 +501,55 @@ export class CanvasFactory implements OnInit {
     this.comunicadorService.enviarCanvas(this.canvas)
 
   }
+
+  findByID(id){
+    console.log("OBJETO FIND " + id)
+    this.lienzoService.findLienzo(id).subscribe(data => this.objeto2 = data);
+    console.log("OBJETO FIND " + this.objeto2.id + "DATA " + this.objeto2.id);
+    if (this.objeto2.id != 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } // encontrar por id, comprobar si existe
+
+
+saveCanvasToBD() {
+  console.log("*************************************")
+    console.log("*************************************")
+    // this.centro.width = this.canvas.getWidth()
+    // this.centro.height = this.canvas.getHeight();
+    this.centro.aulas = this.arrayProps
+    console.log(this.centro.aulas)
+  console.log(this.centro)
+
+  // this.lienzoService.updateCentro(this.centro)
+  var sizeCanvas = this.arrayProps.length
+  console.log('size -- '
+  +this.canvas.size())
+  let arrayProps = [];
+
+  // this.canvas.clear();
+  for (var i = 0; i <= sizeCanvas - 1;
+       i++
+  ) {
+    console.log(this.canvas.toObject())
+    var item = this.arrayProps[i];
+    console.log(item);
+    if (this.findByID(item.id) === true) {//si el canvas existe, actualiza, si se cambia el id, borra y pinta
+      this.lienzoService.postLienzo(item).subscribe(data => console.log(data));
+      console.log("EXISTE, ACTUALIZANDO")
+    } else {
+      this.lienzoService.postLienzo(item).subscribe(data => console.log(data));
+      console.log("NO EXISTE, CREANDO")
+
+    }
+    this.lienzoService.addToCentro(999, item.id).subscribe(data => console.log(data))
+    this.comunicadorService.enviarCanvas(this.canvas)
+  }
+
+}
+
 
   removeSelected() {
     const activeObject = this.canvas.getActiveObject();

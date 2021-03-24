@@ -27,11 +27,12 @@ export class ControlesLienzo2Component implements OnInit {
   canvasImage: string;
 
   ngOnInit(): void {
-    this.comunicadorService.enviarCanvasObservable.subscribe(data => {console.warn(data), this.canvas = data})
-    this.lienzoService.getLienzos().subscribe((data) => {
-      (this.lienzos = data), console.log(data);
-    });
-    console.log(this.lienzos.length);
+    this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService)
+    this.comunicadorService.recibirCanvasObs.subscribe(data => {console.warn(data), this.canvas = data})
+    // this.lienzoService.().subscribe((data) => {
+    //   (this.lienzos = data), console.log(data);
+    // });
+    // console.log(this.lienzos.length);
   }
 
   // @ViewChild("canvas", { static: false }) canvas: EditorLienzoComponent;
@@ -41,7 +42,7 @@ export class ControlesLienzo2Component implements OnInit {
 
     console.log("N LIENZOS == " + this.lienzos.length);
     if (mock === "Aula 1") {
-        this.comunicadorService.enviarMensajeLoadCanvas();
+        // this.comunicadorService.enviarMensajeLoadCanvas();
       // this.canvas.loadCanvasFromMocks(this.lienzos);
     } else if (mock === "Aula 2") {
       // this.canvas.loadCanvasFromMocks(this.lienzos);
@@ -51,11 +52,12 @@ export class ControlesLienzo2Component implements OnInit {
   }
 
   public saveCanvasToDB(): void {
+    console.log("lll")
     // this.canvas.saveCanvasToDB();
-    this.comunicadorService.enviarMensajeSentCanvas();
+this.CanvasFactory.saveCanvasToBD()
   }
 
   public setCanvasImage(): void {
-    this.comunicadorService.enviarMensajeCanvasImage(this.canvasImage);
+    // this.comunicadorService.enviarMensajeCanvasImage(this.canvasImage);
   }
 }

@@ -443,28 +443,7 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
   } // encontrar por id, comprobar si existe
   saveCanvasToDB(): void{
 
-    var sizeCanvas = this.canvas.size();
-    let arrayProps = [];
-
-    // this.canvas.clear();
-    for (var i = 0; i <= sizeCanvas - 1; i++) {
-      var item = this.canvas.item(i).toDatalessObject(["id", "nombre","cnvIMG"]);
-      item.canvasImage = item.cnvIMG;
-      console.log("MEDIO "+item.width);
-      item.left_canvas = item.left;
-      item.top_canvas = item.top;
-      if(this.findByID(item.id) === true){//si el canvas existe, actualiza, si se cambia el id, borra y pinta
-        this.updateCanvasFromDB(item);
-        console.log("EXISTE, ACTUALIZANDO")
-      } else{
-
-        this._lienzoService.postLienzo(item).subscribe(data => console.log(data));
-        console.log("NO EXISTE, CREANDO")
-
-      }
-      this._lienzoService.addToCentro(999,item.id).subscribe(data => console.log(data))
-
-    }
+  this.CanvasFactory.saveCanvasToBD()
 
   }
 

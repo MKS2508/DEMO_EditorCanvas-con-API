@@ -20,7 +20,8 @@ export class ControlesLienzo3Component implements OnInit {
   constructor(
     private lienzoService: CanvasService,
     private comunicadorService: ComunicadorService
-  ) {}
+  ) {
+  }
 
   canvas: fabric.Canvas;
   size: any;
@@ -33,54 +34,55 @@ export class ControlesLienzo3Component implements OnInit {
   fill;
 
   ngOnInit(): void {
-    this.comunicadorService.enviarCanvasObservable.subscribe(data => {console.warn(data), this.canvas = data})
-    this.comunicadorService.enviarSelectedObservable.subscribe(data => {console.warn("SELECCIONADO EN CONTROLES"+data.opacity), this.selected = data})
-    this.comunicadorService.enviarIDObs.subscribe(data => {console.warn("ID EN CONTROLES: "+data),this.id = data, this.setIDparam(data)})
-    this.comunicadorService.enviarNombreObs.subscribe(data => {console.warn("NAME EN CONTROLES:" + data), this.nombre = data, this.setNameParam(data)})
-    this.comunicadorService.enviarFillObs.subscribe(data => {console.warn("FILL EN CONTROLES:" + data), this.fill = data, this.setFillParam(data)})
-    this.comunicadorService.enviarOpacityObs.subscribe(data => {console.warn("OPACITY EN CONTROLES:" + data), this.opacity = data, this.setOpacityParam(data)})
-  }
-
-
-  setOpacityParam(value: number){
-    this.props.opacity = 1;
-    console.error("OPACITY PROPS "+this.props.opacity)
-  }
-  setFillParam(value: string){
-    this.props.fill = value;
-    console.error("FILL PROPS "+this.props.fill)
-
-  }
-  setNameParam(value: string){
-    console.error("NAME PROPS "+this.props.nombre)
-    this.props.nombre = value;
-  }
-  setIDparam(value: number){
-    console.error("id PROPS "+this.props.id)
-    this.props.id = value;
-  }
-  public props: CanvasProps = { // obj canvas
-    canvasFill: '#ffffff',
-    canvasImage: '',
-    id: 10,
-    nombre: null,
-    opacity: null,
-    fill: null,
-  };
-
-  public setId(): void {
-    this.comunicadorService.enviarMensajeID(this.props.id)
-  }
-
-  public setOpacity(): void {
-    this.comunicadorService.enviarMensajeOpacity(1)
-  }
-
-  public setName(): void {
-    this.comunicadorService.enviarMensajeNombre(this.props.nombre)
-  }
-
-  public setFill(): void {
-    this.comunicadorService.enviarMensajeFill(this.props.fill);
+    // this.comunicadorService.enviarCanvasObservable.subscribe(data => {console.warn(data), this.canvas = data})
+    // this.comunicadorService.enviarSelectedObservable.subscribe(data => {console.warn("SELECCIONADO EN CONTROLES"+data.opacity), this.selected = data})
+    // this.comunicadorService.enviarIDObs.subscribe(data => {console.warn("ID EN CONTROLES: "+data),this.id = data, this.setIDparam(data)})
+    // this.comunicadorService.enviarNombreObs.subscribe(data => {console.warn("NAME EN CONTROLES:" + data), this.nombre = data, this.setNameParam(data)})
+    // this.comunicadorService.enviarFillObs.subscribe(data => {console.warn("FILL EN CONTROLES:" + data), this.fill = data, this.setFillParam(data)})
+    // this.comunicadorService.enviarOpacityObs.subscribe(data => {console.warn("OPACITY EN CONTROLES:" + data), this.opacity = data, this.setOpacityParam(data)})
   }
 }
+//
+//
+//   setOpacityParam(value: number){
+//     this.props.opacity = 1;
+//     console.error("OPACITY PROPS "+this.props.opacity)
+//   }
+//   setFillParam(value: string){
+//     this.props.fill = value;
+//     console.error("FILL PROPS "+this.props.fill)
+//
+//   }
+//   setNameParam(value: string){
+//     console.error("NAME PROPS "+this.props.nombre)
+//     this.props.nombre = value;
+//   }
+//   setIDparam(value: number){
+//     console.error("id PROPS "+this.props.id)
+//     this.props.id = value;
+//   }
+//   public props: CanvasProps = { // obj canvas
+//     canvasFill: '#ffffff',
+//     canvasImage: '',
+//     id: 10,
+//     nombre: null,
+//     opacity: null,
+//     fill: null,
+//   };
+//
+//   public setId(): void {
+//     this.comunicadorService.enviarMensajeID(this.props.id)
+//   }
+//
+//   public setOpacity(): void {
+//     this.comunicadorService.enviarMensajeOpacity(1)
+//   }
+//
+//   public setName(): void {
+//     this.comunicadorService.enviarMensajeNombre(this.props.nombre)
+//   }
+//
+//   public setFill(): void {
+//     this.comunicadorService.enviarMensajeFill(this.props.fill);
+//   }
+// }

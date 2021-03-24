@@ -88,50 +88,7 @@
 
       </div>
       <div class="col-xl-4 text-center">
-
-        <div class="card">
-          <div class="card-header">Guardar / Importar</div>
-          <div class="custom-item-title">Controles Edicion</div>
-
-          <button data-toggle="tooltip" data-placement="bottom" title="Save in localStorage" type="button"
-                  class="btn btn-primary">
-            <i class="fa fa-save" aria-hidden="true"></i> Guardar cambios localmente</button>
-          <button data-toggle="tooltip" data-placement="bottom" title="Load from localStorage" type="button"
-                  class="btn btn-primary" (click)="loadCanvasFromMocks(valor_aula.value);">
-            <i class="fa fa-save" aria-hidden="true"></i> Cargar ultimo punto de guardado</button>
-
-          <div class="custom-item-title">Controles BD</div>
-
-
-          <button data-toggle="tooltip" data-placement="bottom" title="Save in localStorage" type="button"
-                  class="btn btn-primary" (click)="saveCanvasToDB();">
-            <i class="fa fa-save" aria-hidden="true"></i> Guardar en BD</button>
-          <button data-toggle="tooltip" data-placement="bottom" title="Load from localStorage" type="button"
-                  class="btn btn-primary" (click)="loadCanvasFromMocks(valor_aula.value);">
-
-            <i class="fa fa-save" aria-hidden="true"></i> Cargar desde BD </button>
-          <input #valor_aula list="aulas" name="aula" id="browser">
-          <datalist id="aulas">
-            <option value="Centro 1">
-            <option value="Centro 2">
-            <option value="Centro 3">
-          </datalist>
-
-          <div class="card">
-            <div class="card-header">Fondo del lienzo</div>
-
-            <div class="custom-item-title"> Imagen de fondo</div>
-
-            <div class="card-body">
-              <div class="custom-item">
-                <div class="custom-item-body">
-                  <input type="text" class="form-control" placeholder="http://example.jpg"
-                         [(ngModel)]="canvas.props.canvasImage" (keyup)="setCanvasImage()">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <app-controles-lienzo2></app-controles-lienzo2>
       </div>
 
       <div class="col-xl-4 text-center">

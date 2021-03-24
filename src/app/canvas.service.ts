@@ -14,6 +14,7 @@ export class CanvasService {
     private url2: string = "http://localhost:8080/centro/";
     private url3: string = "http://localhost:8080/lienzo/";
     private url4: string = "http://localhost:8080/centro/888/aula/";
+  private url5: string = "http://localhost:8080/lienzos/";
 
 
 
@@ -68,10 +69,16 @@ export class CanvasService {
     }
 
     updateCentro(object: CentroProps): Observable<CentroProps>{
+    console.log(object)
+      this.postLienzo(object.aulas[0])
+      this.updateLienzo(object.aulas[1])
+      this.updateLienzo(object.aulas[2])
+      this.updateLienzo(object.aulas[3])
+
       const httpOptions = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
       };
-         return this.http.post<CentroProps>(this.url2, object, httpOptions);
+         return this.http.put<CentroProps>(this.url2+object.id, object, httpOptions);
 
     }
 
@@ -80,7 +87,7 @@ export class CanvasService {
   }
 
     findLienzo(id: any): Observable<ObjProps>{
-        return this.http.get<ObjProps>(this.url+"/"+id);
+        return this.http.get<ObjProps>(this.url5+id);
 
     }
 
