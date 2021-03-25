@@ -181,17 +181,25 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
   setCanvasImage(): void {
     const self = this;
     if (this.props.canvasImage) {
-      this.canvas.setBackgroundColor(new fabric.Pattern({source: this.props.canvasImage, repeat: 'repeat'}), () => {
-        self.props.canvasFill = '';
-        self.canvas.renderAll();
-      });
+      this.canvas.setBackgroundColor(
+        new fabric.Pattern({
+          source: this.props.canvasImage,
+          repeat: "repeat",
+        }),
+        () => {
+          self.props.canvasFill = "";
+          self.canvas.renderAll();
+        }
+      );
     }
     this.canvas.renderAll();
     console.log("CANVASIMG " + this.props.canvasImage);
     this.canvas.setWidth(0);
     this.canvas.setWidth(1140);
-    this.ref.detectChanges()
-  } // este metodo settea la imagen de fondo del lienzo
+
+
+    //Actualizar el canvas despues de cada cambio
+    this.comunicadorService.enviarCanvas(this.canvas);  } // este metodo settea la imagen de fondo del lienzo
 
   setCanvasImageParam(cnvImg: string): void {
     const self = this;
@@ -203,8 +211,7 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     this.props.canvasImage = cnvImg;
     this.canvas.renderAll();
     console.log("CANVASIMG");
-    this.canvas.setWidth(0);
-    this.canvas.setWidth(1140);
+
   } // este metodo settea la imagen de fondo del lienzo, cuando la recuperamos de BD
 
   randomId() {
@@ -459,32 +466,6 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
 
 
   loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps):void {
-
-    var longitudObjetos = mock.length;
-    this.CanvasFactory.confirmClear();
-
-    for (var i = 0; i <= longitudObjetos - 1; i++) {
-        this.addFigureParam(
-        mock[i]
-
-      );
-      console.log('cnvimg'+this.canvas.item(0).toDatalessObject().canvasImage);
-      this.setCanvasImageParam(centro.canvasImage);
-      console.log('propsIMG  '+this.props.canvasImage);
-      this.setCanvasImage();
-      this.canvas.renderAll();
-      this.selectItemAfterAdded(this.canvas.item(0));
-
-    }
-    console.log(centro.width +' - - '+ this.size.width)
-    this.size.width = centro.width;
-    this.size.height = centro.height;
-    console.log(centro.width +' - - '+ this.size.width)
-    this.canvas.setWidth(centro.height);
-    this.setCanvasImageParam(centro.canvasImage);
-    this.ref.detectChanges()
-    this.objCentro = centro;
-    console.error(centro.aulas)
-    console.error(this.objCentro.aulas)
-  } // cargar desde bd
+  this.CanvasFactory.loadCanvasFromMocks(mock, centro)
+  }
 }

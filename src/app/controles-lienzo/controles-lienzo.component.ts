@@ -8,6 +8,7 @@ import { CanvasService } from '../canvas.service';
 import { ComunicadorService } from '../comunicador.service';
 import { EditorLienzoComponent } from '../editor-lienzo/editor-lienzo.component';
 import { CanvasFactory } from '../canvas-factory';
+import {CentroProps} from "../centro-props";
 @Component({
   selector: 'app-controles-lienzo',
   templateUrl: './controles-lienzo.component.html',
@@ -18,12 +19,16 @@ export class ControlesLienzoComponent implements OnInit {
 
 
   public lienzos = []; //lista objetos
+  private centro: CentroProps = {
+    aulas: [], canvasImage: "", height: 2000, id: 0, idCTRSede: "", width: 2000
 
+  };
 public EditorLienzoComponent: EditorLienzoComponent
 canvas: fabric.Canvas;
 size: any;
 CanvasFactory: CanvasFactory;
 selected: fabric.Object
+  private centroSeleccionadoID: number = 888;
   ngOnInit(): void {
   this.size = {
     width: 1000,
@@ -38,6 +43,25 @@ selected: fabric.Object
       this.canvas = data;
       this.selected = data.getActiveObject();
     })
+    this.lienzoService.getCentro(this.centroSeleccionadoID).subscribe(data => {
+      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+      this.lienzos = data.aulas;
+      this.centro = data;
+
+      for (let i = 0; i <= this.lienzos.length - 1; i++) {
+        this.lienzos[i].idCTRCentro = data.id;
+
+      }
+      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - -'+' -  '+this.centro.canvasImage+  '- '+' - - - '+data.aulas[0].idCTRCentro);
+      this.props.canvasImage = this.centro.canvasImage
+
+      this.size.width = this.centro.width
+      this.size.height = this.centro.height
+
+      this.canvas.setWidth(this.centro.width);
+      this.canvas.setHeight(this.centro.height)
+    });
+
   }
 
 

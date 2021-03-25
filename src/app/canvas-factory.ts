@@ -92,6 +92,11 @@ export class CanvasFactory implements OnInit {
     scaleX: 1,
     scaleY: 1
   }
+  private objCentro: CentroProps = {
+    aulas: [], canvasImage: "", height: 1000, id: 0, idCTRSede: "888", width: 1000
+
+
+  };
   constructor(private lienzoService: CanvasService, private comunicadorService: ComunicadorService) {
 
       this.size = {
@@ -170,6 +175,36 @@ export class CanvasFactory implements OnInit {
     //Actualizar el canvas despues de cada cambio
     this.comunicadorService.enviarCanvas(this.canvas);
   }
+
+  loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps):void {
+
+    var longitudObjetos = mock.length;
+    this.confirmClear();
+
+    for (var i = 0; i <= longitudObjetos - 1; i++) {
+      this.addFigureParam(
+        mock[i]
+
+      );
+      this.setCanvasImageParam(centro.canvasImage);
+      this.setCanvasImage();
+      this.canvas.renderAll();
+      this.selectItemAfterAdded(this.canvas.item(0));
+
+    }
+    console.log(centro.width +' - - '+ this.size.width)
+    this.size.width = centro.width;
+    this.size.height = centro.height;
+    console.log(centro.width +' - - '+ this.size.width)
+    this.canvas.setWidth(centro.height);
+    this.setCanvasImageParam(centro.canvasImage);
+    this.objCentro = centro;
+    console.error(centro.aulas)
+    console.error(this.objCentro.aulas)
+    this.comunicadorService.enviarCanvas(this.canvas)
+  } // cargar desde bd
+
+
 
   /**
    * Extiende el objeto del canvas con los parametros extra (ID, name...)
@@ -279,27 +314,7 @@ export class CanvasFactory implements OnInit {
    * ```
    */
   setCanvasImage(): void {
-    const self = this;
-    if (this.props.canvasImage) {
-      this.canvas.setBackgroundColor(
-        new fabric.Pattern({
-          source: this.props.canvasImage,
-          repeat: "repeat",
-        }),
-        () => {
-          self.props.canvasFill = "";
-          self.canvas.renderAll();
-        }
-      );
-    }
-    this.canvas.renderAll();
-    console.log("CANVASIMG " + this.props.canvasImage);
-    this.canvas.setWidth(0);
-    this.canvas.setWidth(1140);
 
-
-    //Actualizar el canvas despues de cada cambio
-    this.comunicadorService.enviarCanvas(this.canvas);
   } //
 
   /**
