@@ -9,7 +9,7 @@
         <i class="fa fa-save" aria-hidden="true"></i> Guardar en BD</button>
     <button data-toggle="tooltip" data-placement="bottom" title="Load from localStorage" type="button"
         class="btn btn-primary" (click)="loadCanvasFromMocks(valor_aula.value);">
-  
+
         <i class="fa fa-save" aria-hidden="true"></i> Cargar desde BD </button>
         <input #valor_aula list="aulas" name="aula" id="browser">
         <datalist id="aulas">
@@ -32,4 +32,19 @@
             </div>
         </div>
     </div>
+  <div class="card">
+    <div class="card-header">Cargar otro centro</div>
+
+    <div class="custom-item-title">Centros</div>
+
+    <div class="card-body">
+      <div class="custom-item">
+        <div class="custom-item-body">
+          <button data-toggle="tooltip" data-placement="bottom" title="Save in localStorage" type="button"
+                  class="btn btn-primary" (click)="mostrarCentros()">
+            <i class="fa fa-save" aria-hidden="true"></i> Ver centros</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

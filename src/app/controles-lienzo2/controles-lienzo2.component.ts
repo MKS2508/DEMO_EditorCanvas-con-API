@@ -82,4 +82,8 @@ this.CanvasFactory.saveCanvasToBD()
     this.CanvasFactory.setCanvasImageParam(this.canvasImage)
     // this.comunicadorService.enviarMensajeCanvasImage(this.canvasImage);
   }
+
+  mostrarCentros() {
+    this.comunicadorService.enviarMostrar(false)
+  }
 }
