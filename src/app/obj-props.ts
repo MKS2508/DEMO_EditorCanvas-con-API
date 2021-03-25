@@ -8,7 +8,7 @@ export interface ObjProps {
     top_canvas: number;
     angle: number;
     fill: string;
-    opacity: number;
+    opacity: any;
     idCTRCentro: string;
     scaleX: number;
     scaleY: number;

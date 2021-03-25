@@ -2,6 +2,7 @@ import {EventEmitter, Injectable} from '@angular/core';
 import { Subject } from 'rxjs';
 import { fabric } from "fabric";
 import { CanvasProps } from "../app/CanvasProps";
+import {ObjProps} from "./obj-props";
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,13 @@ export class ComunicadorService {
   private canvasEmitter = new EventEmitter<fabric.Canvas>();
   recibirCanvasObs = this.canvasEmitter.asObservable();
 
+  private selectedEmitter = new EventEmitter<ObjProps>();
+  recibirSelectedObs = this.selectedEmitter.asObservable()
 
+  enviarSelected(obj: ObjProps){
+    console.error(obj)
+    this.selectedEmitter.emit(obj)
+  }
 
   enviarCanvas(canvas: fabric.Canvas){
     this.canvasEmitter.emit(canvas

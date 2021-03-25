@@ -6,14 +6,14 @@ import {
   ChangeDetectorRef,
   OnInit,
 } from "@angular/core";
-import { fabric } from "fabric";
+import {fabric} from "fabric";
 
-import { ObjProps } from "./obj-props";
+import {ObjProps} from "./obj-props";
 
-import { CanvasProps } from "./CanvasProps";
-import { CanvasService } from "./canvas.service";
-import { EditorLienzoComponent } from "./editor-lienzo/editor-lienzo.component";
-import { ComunicadorService } from "./comunicador.service";
+import {CanvasProps} from "./CanvasProps";
+import {CanvasService} from "./canvas.service";
+import {EditorLienzoComponent} from "./editor-lienzo/editor-lienzo.component";
+import {ComunicadorService} from "./comunicador.service";
 import {CentroProps} from "./centro-props";
 
 export class CanvasFactory implements OnInit {
@@ -25,7 +25,7 @@ export class CanvasFactory implements OnInit {
 
   public canvas: fabric.Canvas;
   @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
-  editorlienzo:EditorLienzoComponent;
+  editorlienzo: EditorLienzoComponent;
   public size: any;
   public props: CanvasProps = {
     // obj canvas
@@ -35,7 +35,7 @@ export class CanvasFactory implements OnInit {
     nombre: null,
     opacity: null,
     fill: null,
-    idCTRCentro:"999"
+    idCTRCentro: "999"
   };
 
   seleccionado: String = "object:selected";
@@ -54,9 +54,9 @@ export class CanvasFactory implements OnInit {
     angle: 0,
     fill: "#ffffff",
     opacity: 0,
-    scaleY:1,
-    scaleX:1,
-    idCTRCentro:'999'
+    scaleY: 1,
+    scaleX: 1,
+    idCTRCentro: '999'
   };
 
   private objetoEncontrado: ObjProps = {
@@ -72,9 +72,9 @@ export class CanvasFactory implements OnInit {
     angle: 0,
     fill: "#ffffff",
     opacity: 0,
-    scaleY:1,
-    scaleX:1,
-    idCTRCentro:'999'
+    scaleY: 1,
+    scaleX: 1,
+    idCTRCentro: '999'
   };
   public selected: fabric.Object;
   private objeto2: ObjProps = { //objFind
@@ -88,7 +88,7 @@ export class CanvasFactory implements OnInit {
     angle: 0,
     fill: '#ffffff',
     opacity: 0,
-    idCTRCentro:'',
+    idCTRCentro: '',
     scaleX: 1,
     scaleY: 1
   }
@@ -97,15 +97,22 @@ export class CanvasFactory implements OnInit {
 
 
   };
+
   constructor(private lienzoService: CanvasService, private comunicadorService: ComunicadorService) {
 
-      this.size = {
+    this.size = {
       width: 1140,
       height: 800,
     };
     console.warn(this.canvas)
 
-
+    this.comunicadorService.recibirSelectedObs.subscribe(data2 =>{
+      console.log(data2)
+      this.props.id = data2.id
+      this.props.nombre = data2.nombre
+      this.props.fill = data2.fill
+      this.props.opacity = data2.opacity
+    });
 
     this.comunicadorService.recibirCanvasObs.subscribe(data => {
       this.canvas = data;
@@ -113,8 +120,8 @@ export class CanvasFactory implements OnInit {
       this.selected = this.canvas.getActiveObject();
 
       this.arrayProps = [];
-      for(var i = 0; i <=       this.canvas.size()-1; i++){
-          // this.objetoBD = null;
+      for (var i = 0; i <= this.canvas.size() - 1; i++) {
+        // this.objetoBD = null;
 
         console.log(data._objects[i].toObject())
         this.objetoBD.id = data._objects[i].toObject().id;
@@ -125,24 +132,26 @@ export class CanvasFactory implements OnInit {
 
         this.objetoBD.height = data._objects[i].toObject().height;
         this.objetoBD.scaleX = data._objects[i].toObject().scaleX;
-        this.objetoBD.scaleY =  data._objects[i].toObject().scaleY;
-        this.objetoBD.idCTRCentro  =  data._objects[i].toObject().idCTRCentro;
-        this.objetoBD.angle  =  data._objects[i].toObject().angle;
-        this.objetoBD.fill   =  data._objects[i].toObject().fill;
-        this.objetoBD.opacity  =  data._objects[i].toObject().opacity;
-        this.objetoBD.left_canvas  =  data._objects[i].toObject().left;
-        this.objetoBD.top_canvas  =  data._objects[i].toObject().top;
+        this.objetoBD.scaleY = data._objects[i].toObject().scaleY;
+        this.objetoBD.idCTRCentro = data._objects[i].toObject().idCTRCentro;
+        this.objetoBD.angle = data._objects[i].toObject().angle;
+        this.objetoBD.fill = data._objects[i].toObject().fill;
+        this.objetoBD.opacity = data._objects[i].toObject().opacity;
+        this.objetoBD.left_canvas = data._objects[i].toObject().left;
+        this.objetoBD.top_canvas = data._objects[i].toObject().top;
         let clone = {...this.objetoBD};
 
         this.arrayProps.push(clone)
         this.arrayProps.length
 
-        console.log('---------------------------------------'+         this.arrayProps.length
+        console.log('---------------------------------------' + this.arrayProps.length
         )
 
         // this.objetoBD.id = this.canvas.
       }
-    });    }
+    });
+  }
+
   ngOnInit(): void {
     console.log("FUNCIONA")
   }
@@ -176,7 +185,7 @@ export class CanvasFactory implements OnInit {
     this.comunicadorService.enviarCanvas(this.canvas);
   }
 
-  loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps):void {
+  loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps): void {
 
     var longitudObjetos = mock.length;
     this.confirmClear();
@@ -184,7 +193,6 @@ export class CanvasFactory implements OnInit {
     for (var i = 0; i <= longitudObjetos - 1; i++) {
       this.addFigureParam(
         mock[i]
-
       );
       this.setCanvasImageParam(centro.canvasImage);
       this.setCanvasImage();
@@ -192,10 +200,10 @@ export class CanvasFactory implements OnInit {
       this.selectItemAfterAdded(this.canvas.item(0));
 
     }
-    console.log(centro.width +' - - '+ this.size.width)
+    console.log(centro.width + ' - - ' + this.size.width)
     this.size.width = centro.width;
     this.size.height = centro.height;
-    console.log(centro.width +' - - '+ this.size.width)
+    console.log(centro.width + ' - - ' + this.size.width)
     this.canvas.setWidth(centro.height);
     this.setCanvasImageParam(centro.canvasImage);
     this.objCentro = centro;
@@ -203,7 +211,6 @@ export class CanvasFactory implements OnInit {
     console.error(this.objCentro.aulas)
     this.comunicadorService.enviarCanvas(this.canvas)
   } // cargar desde bd
-
 
 
   /**
@@ -278,9 +285,9 @@ export class CanvasFactory implements OnInit {
     let angleParam: number = Objeto.angle;
     let fillParam: string = Objeto.fill;
     let opacityParam: number = Objeto.opacity;
-    let scaleXparam:number = Objeto.scaleX;
-    let scaleYparam:number = Objeto.scaleY;
-    let idCTRCentroparam:string = Objeto.idCTRCentro
+    let scaleXparam: number = Objeto.scaleX;
+    let scaleYparam: number = Objeto.scaleY;
+    let idCTRCentroparam: string = Objeto.idCTRCentro
 
     let rect = new fabric.Rect({
       width: widthParam,
@@ -329,7 +336,7 @@ export class CanvasFactory implements OnInit {
     const self = this;
 
     this.canvas.setBackgroundColor(
-      new fabric.Pattern({ source: cnvImg, repeat: "repeat" }),
+      new fabric.Pattern({source: cnvImg, repeat: "repeat"}),
       () => {
         self.props.canvasFill = "";
         self.canvas.renderAll();
@@ -383,21 +390,21 @@ export class CanvasFactory implements OnInit {
 
       if (typeof value === "string") {
         if (value.includes(underline)) {
-          object.setSelectionStyles({ underline: true });
+          object.setSelectionStyles({underline: true});
         } else {
-          object.setSelectionStyles({ underline: false });
+          object.setSelectionStyles({underline: false});
         }
 
         if (value.includes(overline)) {
-          object.setSelectionStyles({ overline: true });
+          object.setSelectionStyles({overline: true});
         } else {
-          object.setSelectionStyles({ overline: false });
+          object.setSelectionStyles({overline: false});
         }
 
         if (value.includes(lineThrough)) {
-          object.setSelectionStyles({ linethrough: true });
+          object.setSelectionStyles({linethrough: true});
         } else {
-          object.setSelectionStyles({ linethrough: false });
+          object.setSelectionStyles({linethrough: false});
         }
       }
 
@@ -517,7 +524,7 @@ export class CanvasFactory implements OnInit {
 
   }
 
-  findByID(id){
+  findByID(id) {
     console.log("OBJETO FIND " + id)
     this.lienzoService.findLienzo(id).subscribe(data => this.objeto2 = data);
     console.log("OBJETO FIND " + this.objeto2.id + "DATA " + this.objeto2.id);
@@ -529,41 +536,41 @@ export class CanvasFactory implements OnInit {
   } // encontrar por id, comprobar si existe
 
 
-saveCanvasToBD() {
-  console.log("*************************************")
+  saveCanvasToBD() {
+    console.log("*************************************")
     console.log("*************************************")
     // this.centro.width = this.canvas.getWidth()
     // this.centro.height = this.canvas.getHeight();
     this.centro.aulas = this.arrayProps
     console.log(this.centro.aulas)
-  console.log(this.centro)
+    console.log(this.centro)
 
-  // this.lienzoService.updateCentro(this.centro)
-  var sizeCanvas = this.arrayProps.length
-  console.log('size -- '
-  +this.canvas.size())
-  let arrayProps = [];
+    // this.lienzoService.updateCentro(this.centro)
+    var sizeCanvas = this.arrayProps.length
+    console.log('size -- '
+      + this.canvas.size())
+    let arrayProps = [];
 
-  // this.canvas.clear();
-  for (var i = 0; i <= sizeCanvas - 1;
-       i++
-  ) {
-    console.log(this.canvas.toObject())
-    var item = this.arrayProps[i];
-    console.log(item);
-    if (this.findByID(item.id) === true) {//si el canvas existe, actualiza, si se cambia el id, borra y pinta
-      this.lienzoService.postLienzo(item).subscribe(data => console.log(data));
-      console.log("EXISTE, ACTUALIZANDO")
-    } else {
-      this.lienzoService.postLienzo(item).subscribe(data => console.log(data));
-      console.log("NO EXISTE, CREANDO")
+    // this.canvas.clear();
+    for (var i = 0; i <= sizeCanvas - 1;
+         i++
+    ) {
+      console.log(this.canvas.toObject())
+      var item = this.arrayProps[i];
+      console.log(item);
+      if (this.findByID(item.id) === true) {//si el canvas existe, actualiza, si se cambia el id, borra y pinta
+        this.lienzoService.postLienzo(item).subscribe(data => console.log(data));
+        console.log("EXISTE, ACTUALIZANDO")
+      } else {
+        this.lienzoService.postLienzo(item).subscribe(data => console.log(data));
+        console.log("NO EXISTE, CREANDO")
 
+      }
+      this.lienzoService.addToCentro(999, item.id).subscribe(data => console.log(data))
+      this.comunicadorService.enviarCanvas(this.canvas)
     }
-    this.lienzoService.addToCentro(999, item.id).subscribe(data => console.log(data))
-    this.comunicadorService.enviarCanvas(this.canvas)
-  }
 
-}
+  }
 
 
   removeSelected() {
@@ -584,6 +591,7 @@ saveCanvasToBD() {
     this.comunicadorService.enviarCanvas(this.canvas)
 
   }
+
   sendToBack() {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
@@ -599,7 +607,9 @@ saveCanvasToBD() {
       });
       this.comunicadorService.enviarCanvas(this.canvas)
 
-    }  }
+    }
+  }
+
   bringToFront() {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
@@ -614,7 +624,9 @@ saveCanvasToBD() {
       });
       this.comunicadorService.enviarCanvas(this.canvas)
 
-    }  }
+    }
+  }
+
   clone() {
     const activeObject = this.canvas.getActiveObject();
     const activeGroup = this.canvas.getActiveObjects();
@@ -648,4 +660,17 @@ saveCanvasToBD() {
 
   }
 
+  setId() {
+    const valID: number = this.props.id;
+    const valNombre: string = this.props.nombre;
+    const complete = this.canvas.getActiveObject().toObject(["id", "nombre"]);
+    console.log(complete);
+    this.canvas.getActiveObject().toObject = () => {
+      complete.id = valID;
+      complete.nombre = valNombre;
+      return complete;
+    };
+
+  this.comunicadorService.enviarCanvas(this.canvas);
+  }
 }

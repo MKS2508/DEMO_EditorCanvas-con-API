@@ -24,7 +24,6 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
   console.warn("Canvas recibido en editorLienzo: "+'/n'+this.canvas)
   this.selected = this.canvas.getActiveObject()
 
-
 });    }
 
   @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
@@ -102,7 +101,30 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
         selectedObject.hasRotatingPoint = true;
         selectedObject.transparentCorners = false;
         selectedObject.cornerColor = 'red';
+        console.log(selectedObject.toObject())
+        let obj: ObjProps = {
+          angle: 0,
+          fill: "",
+          height: 0,
+          id: 0,
+          idCTRCentro: "",
+          left_canvas: 0,
+          lienzo: "",
+          nombre: "",
+          opacity: 0,
+          scaleX: 0,
+          scaleY: 0,
+          top_canvas: 0,
+          width: 0
 
+        }
+        obj.id = selectedObject.toObject().id
+        obj.nombre = selectedObject.toObject().nombre
+        obj.opacity = selectedObject.toObject().opacity
+        obj.fill= selectedObject.toObject().fill
+
+        //enviar selected
+        this.comunicadorService.enviarSelected(obj)
         this.resetPanels();
 
         if (selectedObject.type !== 'group' && selectedObject) {
@@ -339,13 +361,11 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
   setId(): void {
     const valID: number = this.props.id;
     const valNombre: string = this.props.nombre;
-    const valcnv: string = this.props.canvasImage;
-    const complete = this.canvas.getActiveObject().toObject(["id", "nombre", "cnvIMG"]);
+    const complete = this.canvas.getActiveObject().toObject(["id", "nombre"]);
     console.log(complete);
     this.canvas.getActiveObject().toObject = () => {
       complete.id = valID;
       complete.nombre = valNombre;
-      complete.cnvIMG = valcnv;
       return complete;
     };
   }

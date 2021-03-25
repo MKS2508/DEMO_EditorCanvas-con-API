@@ -21,6 +21,7 @@ import { ControlesLienzo3Component } from './controles-lienzo3/controles-lienzo3
 
     ControlesLienzoComponent,
     ControlesLienzo2Component,
+    ControlesLienzo3Component,
 
   ],
   imports: [
