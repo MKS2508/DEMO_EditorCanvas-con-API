@@ -60,7 +60,6 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     scaleY:1
   }
 
-  private objCentro: CentroProps;
 
   public url: string | ArrayBuffer = '';
   public size: any = {
@@ -154,51 +153,6 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     this.comunicadorService.enviarCanvas(this.canvas);
   }
 
-  changeSize(): void { // tamanio canvas
-    this.canvas.setWidth(this.size.width);
-    this.canvas.setHeight(this.size.height);
-  }
-
-  addFigure(): void { // agregar rectangulo nuevo
-    // agregar rectangulo nuevo
-    this.CanvasFactory.addFigure();
-  }
-
-  addFigureParam(objProps: ObjProps
-  ): void {
- this.CanvasFactory.addFigureParam(objProps)
-  }
-
-  cleanSelect(): void {
-    this.canvas.discardActiveObject().renderAll();
-  } //des-seleccion
-
-  selectItemAfterAdded(obj): void {
-    this.canvas.discardActiveObject().renderAll();
-    this.canvas.setActiveObject(obj);
-  }//se utiliza despues de pintar un obj
-
-  setCanvasFill(): void {
-    if (!this.props.canvasImage) {
-      this.canvas.backgroundColor = this.props.canvasFill;
-      this.canvas.renderAll();
-    }
-  } // color relleno
-
-  extend(obj: any, id: number, nombre: string, idCTRCentro: string): void {
-    obj.toObject = (function (toObject): any {
-      return function () {
-        return fabric.util.object.extend(toObject.call(this), {
-          id: id,
-          nombre: nombre,
-          idCTRCentro: idCTRCentro
-        });
-      };
-    })(obj.toObject);
-    obj.id = id;
-    obj.nombre = nombre;
-    idCTRCentro = this.props.idCTRCentro;
-  } // este metodo extiende el objeto del canvas con los parametros extra (ID, name...)
 
   setCanvasImage(): void {
     const self = this;
@@ -223,22 +177,7 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     //Actualizar el canvas despues de cada cambio
     this.comunicadorService.enviarCanvas(this.canvas);  } // este metodo settea la imagen de fondo del lienzo
 
-  setCanvasImageParam(cnvImg: string): void {
-    const self = this;
 
-    this.canvas.setBackgroundColor(new fabric.Pattern({source: cnvImg, repeat: 'repeat'}), () => {
-      self.props.canvasFill = '';
-      self.canvas.renderAll();
-    });
-    this.props.canvasImage = cnvImg;
-    this.canvas.renderAll();
-    console.log("CANVASIMG");
-
-  } // este metodo settea la imagen de fondo del lienzo, cuando la recuperamos de BD
-
-  randomId() {
-    return Math.floor(Math.random() * 999999) + 1;
-  } // genera id aleatorio
 
 //getter y setter estilo canvas
   getActiveStyle(styleName, object): any {
@@ -254,98 +193,6 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     }
   }
 
-  setActiveStyle(styleName, value: string | number, object: fabric.IText): void {
-    object = object || this.canvas.getActiveObject() as fabric.IText;
-    if (!object) {
-      return;
-    }
-
-    if (object.setSelectionStyles && object.isEditing) {
-      const style = {};
-      style[styleName] = value;
-
-      if (typeof value === 'string') {
-        if (value.includes('underline')) {
-          object.setSelectionStyles({underline: true});
-        } else {
-          object.setSelectionStyles({underline: false});
-        }
-
-        if (value.includes('overline')) {
-          object.setSelectionStyles({overline: true});
-        } else {
-          object.setSelectionStyles({overline: false});
-        }
-
-        if (value.includes('line-through')) {
-          object.setSelectionStyles({linethrough: true});
-        } else {
-          object.setSelectionStyles({linethrough: false});
-        }
-      }
-
-      object.setSelectionStyles(style);
-      object.setCoords();
-
-    } else {
-      if (typeof value === 'string') {
-        if (value.includes('underline')) {
-          object.set('underline', true);
-        } else {
-          object.set('underline', false);
-        }
-
-        if (value.includes('overline')) {
-          object.set('overline', true);
-        } else {
-          object.set('overline', false);
-        }
-
-        if (value.includes('line-through')) {
-          object.set('linethrough', true);
-        } else {
-          object.set('linethrough', false);
-        }
-      }
-
-      object.set(styleName, value);
-    }
-
-    object.setCoords();
-    this.canvas.renderAll();
-  }
-
-//clonar obj
-  clone(): void {
-    const activeObject = this.canvas.getActiveObject();
-    const activeGroup = this.canvas.getActiveObjects();
-
-    if (activeObject) {
-      let clone;
-      switch (activeObject.type) {
-        case 'rect':
-          clone = new fabric.Rect(activeObject.toObject());
-          break;
-        case 'circle':
-          clone = new fabric.Circle(activeObject.toObject());
-          break;
-        case 'triangle':
-          clone = new fabric.Triangle(activeObject.toObject());
-          break;
-        case 'i-text':
-          clone = new fabric.IText('', activeObject.toObject());
-          break;
-        case 'image':
-          clone = fabric.util.object.clone(activeObject);
-          break;
-      }
-      if (clone) {
-        clone.set({left: 10, top: 10});
-        this.canvas.add(clone);
-        this.selectItemAfterAdded(clone);
-      }
-    }
-  }
 
 //getter y setter
   getId(): void {
@@ -358,17 +205,7 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     console.log("GET NOMBRE ACTIVADO 2 -->" + this.props.nombre);
   }
 
-  setId(): void {
-    const valID: number = this.props.id;
-    const valNombre: string = this.props.nombre;
-    const complete = this.canvas.getActiveObject().toObject(["id", "nombre"]);
-    console.log(complete);
-    this.canvas.getActiveObject().toObject = () => {
-      complete.id = valID;
-      complete.nombre = valNombre;
-      return complete;
-    };
-  }
+
 
   getOpacity(): void {
     this.props.opacity = this.getActiveStyle('opacity', null) * 100;
@@ -379,47 +216,6 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
   resetPanels(): void {
     this.figureEditor = false;
   }
-
-  private objeto2: ObjProps = { //objFind
-    id: 0,
-    nombre: 'a',
-    lienzo: '',
-    width: 0,
-    height: 0,
-    left_canvas: 0,
-    top_canvas: 0,
-    angle: 0,
-    fill: '#ffffff',
-    opacity: 0,
-    idCTRCentro:'',
-    scaleX: 1,
-    scaleY: 1
-  }
-
-  findByID(id: string): boolean {
-    console.log("OBJETO FIND " + id)
-    this._lienzoService.findLienzo(id).subscribe(data => this.objeto2 = data);
-    console.log("OBJETO FIND " + this.objeto2.id + "DATA " + this.objeto2.id);
-    if (this.objeto2.id != 0) {
-      return true;
-    } else {
-      return false;
-    }
-  } // encontrar por id, comprobar si existe
-  saveCanvasToDB(): void{
-
-  this.CanvasFactory.saveCanvasToBD()
-
-  }
-
-  deleteCanvasFromDB(id:number): void{
-
-      this._lienzoService.deleteLienzo(id).subscribe(data => console.log("OBJETO CON ID: "+id + "ELIMINADO DE LA BD ----- "+data));
-
-  } //eliminar elemento de la bd, se llama desde removeSelected
-
-
-
 
   loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps):void {
   this.CanvasFactory.loadCanvasFromMocks(mock, centro)

@@ -38,6 +38,7 @@ export class AppComponent implements OnInit{
           this.lienzos[i].idCTRCentro = data.id;
 
         }
+        //factory
         this.canvas.loadCanvasFromMocks(this.lienzos, this.centro);
         console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
 

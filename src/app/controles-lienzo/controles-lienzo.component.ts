@@ -70,6 +70,8 @@ selected: fabric.Object
         this.canvas.setHeight(this.centro.height)
 
         this.changeSize()
+            this.CanvasFactory.loadCanvasFromMocks(this.lienzos, this.centro);
+
         // this.size.width = 1
         //
         // this.size.height = this.centro.height

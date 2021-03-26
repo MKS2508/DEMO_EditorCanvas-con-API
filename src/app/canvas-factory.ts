@@ -1,10 +1,6 @@
 import {
-  Component,
   ViewChild,
   ElementRef,
-  AfterViewInit,
-  ChangeDetectorRef,
-  OnInit,
 } from "@angular/core";
 import {fabric} from "fabric";
 
@@ -16,7 +12,7 @@ import {EditorLienzoComponent} from "./editor-lienzo/editor-lienzo.component";
 import {ComunicadorService} from "./comunicador.service";
 import {CentroProps} from "./centro-props";
 
-export class CanvasFactory implements OnInit {
+export class CanvasFactory {
 
 
 
@@ -102,7 +98,7 @@ export class CanvasFactory implements OnInit {
       aulas: [], canvasImage: "", height: 1000, id: 0, idCTRSede: "", width: 100
 
     }
-    this.seleccionadoID = 2222
+    this.seleccionadoID = 777
     this.size = {
       width: 1140,
       height: 800,
@@ -112,15 +108,13 @@ export class CanvasFactory implements OnInit {
     this.comunicadorService.recibirCentroObs.subscribe(data =>{
       console.log(data)
       this.seleccionadoID  = data
-      console.log("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 "+data)
       // this.comunicadorService.enviarCentro(this.seleccionadoID)
-      this.lienzoService.getCentro(data).subscribe(data =>{
-        console.log("22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222 -- "+data.id)
-        this.seleccionadoID = data.id
-        console.log("22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222 -- "+this.seleccionadoID)
+      this.lienzoService.getCentro(data).subscribe(data2 =>{
+        this.centro = data2
+        this.seleccionadoID = data2.id
 
-        this.canvas.setWidth(data.width)
-        this.canvas.setHeight(data.height);
+        this.canvas.setWidth(data2.width)
+        this.canvas.setHeight(data2.height);
         this.comunicadorService.enviarCanvas(this.canvas)
 
       })
@@ -172,9 +166,6 @@ export class CanvasFactory implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    console.log("FUNCIONA")
-  }
 
   /**
    * Agrega una figura basica al canvas, sin parametros
@@ -214,7 +205,6 @@ export class CanvasFactory implements OnInit {
       this.addFigureParam(
         mock[i]
       );
-      this.setCanvasImageParam(centro.canvasImage);
       this.setCanvasImage();
       this.canvas.renderAll();
       this.selectItemAfterAdded(this.canvas.item(0));
@@ -258,7 +248,6 @@ export class CanvasFactory implements OnInit {
     obj.nombre = nombre;
     idCTRCentro = this.props.idCTRCentro;
 
-    this.comunicadorService.enviarCanvas(this.canvas);
 
   } // este metodo extiende el objeto del canvas con los parametros extra (ID, name...)
 
@@ -333,7 +322,6 @@ export class CanvasFactory implements OnInit {
 
 
     //Actualizar el canvas despues de cada cambio
-    this.comunicadorService.enviarCanvas(this.canvas);
   }
 
   /**
@@ -377,93 +365,8 @@ export class CanvasFactory implements OnInit {
   }
 
   //getter y setter estilo canvas
-  getActiveStyle(styleName, object): any {
-    object = object || this.canvas.getActiveObject();
-    if (!object) {
-      return "";
-    }
-
-    if (object.getSelectionStyles && object.isEditing) {
-      return object.getSelectionStyles()[styleName] || "";
-    } else {
-      return object[styleName] || "";
-    }
-
-    //Actualizar el canvas despues de cada cambio
-    this.comunicadorService.enviarCanvas(this.canvas);
-  }
-
-  setActiveStyle(
-    styleName,
-    value: string | number,
-    object: fabric.IText
-  ): void {
-    const underline: string = "underline";
-    const overline: string = "overline";
-    const lineThrough: string = "line-through";
-    object = object || (this.canvas.getActiveObject() as fabric.IText);
-    if (!object) {
-      return;
-    }
-
-    if (object.setSelectionStyles && object.isEditing) {
-      const style = {};
-
-      style[styleName] = value;
-
-      if (typeof value === "string") {
-        if (value.includes(underline)) {
-          object.setSelectionStyles({underline: true});
-        } else {
-          object.setSelectionStyles({underline: false});
-        }
-
-        if (value.includes(overline)) {
-          object.setSelectionStyles({overline: true});
-        } else {
-          object.setSelectionStyles({overline: false});
-        }
-
-        if (value.includes(lineThrough)) {
-          object.setSelectionStyles({linethrough: true});
-        } else {
-          object.setSelectionStyles({linethrough: false});
-        }
-      }
-
-      object.setSelectionStyles(style);
-      object.setCoords();
-    } else {
-      if (typeof value === "string") {
-        if (value.includes(underline)) {
-          object.set("underline", true);
-        } else {
-          object.set("underline", false);
-        }
-
-        if (value.includes(overline)) {
-          object.set("overline", true);
-        } else {
-          object.set("overline", false);
-        }
-
-        if (value.includes(lineThrough)) {
-          object.set("linethrough", true);
-        } else {
-          object.set("linethrough", false);
-        }
-      }
-
-      object.set(styleName, value);
-    }
-
-    object.setCoords();
-    this.canvas.renderAll();
 
 
-    //Actualizar el canvas despues de cada cambio
-    this.comunicadorService.enviarCanvas(this.canvas);
-  }
 
   /**
    *  Busca el objeto con el id pasado como parametro en la BD, si no existe, devuelve false,
@@ -559,7 +462,7 @@ export class CanvasFactory implements OnInit {
   } // encontrar por id, comprobar si existe
 
 
-  saveCanvasToBD() {
+  saveCanvasToBD(id:number) {
     console.log("*************************************")
     console.log(this.seleccionadoID)
     console.log("*************************************")
@@ -590,7 +493,8 @@ export class CanvasFactory implements OnInit {
         console.log("NO EXISTE, CREANDO")
 
       }
-      this.lienzoService.addToCentro(this.seleccionadoID, item.id).subscribe(data => console.log(data))
+      this.lienzoService.addToCentro(id, item.id).subscribe(data => console.log(data))
+      console.log("22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222 -- "+this.seleccionadoID)
       this.comunicadorService.enviarCanvas(this.canvas)
     }
 

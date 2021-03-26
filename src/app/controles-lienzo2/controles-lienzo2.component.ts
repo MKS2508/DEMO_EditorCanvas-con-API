@@ -13,12 +13,14 @@ import {CentroProps} from "../centro-props";
   styleUrls: ["./controles-lienzo2.component.scss"],
 })
 export class ControlesLienzo2Component implements OnInit {
+
   public lienzos = []; //lista objetos
   private centro: CentroProps = {
     aulas: [], canvasImage: "", height: 2000, id: 0, idCTRSede: "", width: 2000
 
   };
   private centroSeleccionadoID: number = 888;
+  private _selecID: number;
 
   constructor(
     private lienzoService: CanvasService,
@@ -36,22 +38,30 @@ export class ControlesLienzo2Component implements OnInit {
   canvasImage: string = '';
 
   ngOnInit(): void {
-    this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService)
+    this._selecID =888
+
+      this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService)
     this.comunicadorService.recibirCanvasObs.subscribe(data => {console.warn(data), this.canvas = data})
-    this.lienzoService.getCentro(this.centroSeleccionadoID).subscribe(data => {
-      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - ');
-      this.lienzos = data.aulas;
-      this.centro = data;
 
-      for (let i = 0; i <= this.lienzos.length - 1; i++) {
-        this.lienzos[i].idCTRCentro = data.id;
+    this.comunicadorService.recibirCentroObs.subscribe(data => {
+        console.log('IDCENTRO '+' ****** '+data+' - - - - - - - - - ');
+      this.lienzoService.getCentro(data).subscribe(data => {
+        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - ');
+        this.lienzos = data.aulas;
+        this.centro = data;
+        this.centroSeleccionadoID = data.id
+        for (let i = 0; i <= this.lienzos.length - 1; i++) {
+          this.lienzos[i].idCTRCentro = data.id;
 
-      }
-      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
-      this.canvasImage = this.centro.canvasImage
+        }
+        // console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+        this.canvasImage = this.centro.canvasImage
+        console.log('IDCENTRO '+' ****** '+this.centroSeleccionadoID+' - - - - - - - - - ');
+        this.setter(this.centroSeleccionadoID)
+        // this.setCanvasImage()
+      });
 
-      // this.setCanvasImage()
-    });
+    })
 
   }
 
@@ -73,11 +83,26 @@ export class ControlesLienzo2Component implements OnInit {
   }
 
   public saveCanvasToDB(): void {
-    console.log("lll")
-    // this.canvas.saveCanvasToDB();
-this.CanvasFactory.saveCanvasToBD()
+    console.log("lll " + this.centroSeleccionadoID +''+ this.centro.id)
+    // this.canvas.saveCanvasToDB(this.centroSeleccionadoID);
+
+this.CanvasFactory.saveCanvasToBD(this.centroSeleccionadoID)
+  }
+//TODO: seleccionadoID no se actualiza en el subscribe
+  public setter(data){
+
+    console.log('lll '+ data)
+    this._selecID = data
+    const id = data
+    console.log('lll '+ this._selecID)
+    this._selecID = id
+    console.log('lll '+ this._selecID)
+
   }
 
+  public gettter(){
+    console.log('lll 2 '+ this._selecID)
+  }
   public setCanvasImage(): void {
     this.CanvasFactory.setCanvasImageParam(this.canvasImage)
     // this.comunicadorService.enviarMensajeCanvasImage(this.canvasImage);
