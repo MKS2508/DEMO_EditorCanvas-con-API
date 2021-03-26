@@ -1,5 +1,5 @@
 import {EventEmitter, Injectable} from '@angular/core';
-import { Subject } from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import { fabric } from "fabric";
 import { CanvasProps } from "../app/CanvasProps";
 import {ObjProps} from "./obj-props";
@@ -18,8 +18,10 @@ export class ComunicadorService {
  //BLOQUE 1: mostrar/ocultar menu centros
   private mostrarEmitter = new EventEmitter<boolean>();
   recibirMostrarObs = this.mostrarEmitter.asObservable();
+  private initialState: 0;
+  private seleccionarCentroEmitter = new BehaviorSubject<number>(this.initialState);
 
-  private seleccionarCentroEmitter = new EventEmitter<number>();
+  // private seleccionarCentroEmitter = new EventEmitter<number>();
   recibirCentroObs = this.seleccionarCentroEmitter.asObservable();
 
   enviarMostrar(mostrar: boolean){
@@ -27,7 +29,7 @@ export class ComunicadorService {
   }
 
   enviarCentro(centroID: number){
-  this.seleccionarCentroEmitter.emit(centroID);
+  this.seleccionarCentroEmitter.next(centroID);
   }
   // FIN 1
 
@@ -40,11 +42,11 @@ export class ComunicadorService {
 
   enviarSelected(obj: ObjProps){
     console.error(obj)
-    this.selectedEmitter.emit(obj)
+    this.selectedEmitter.next(obj)
   }
 
   enviarCanvas(canvas: fabric.Canvas){
-    this.canvasEmitter.emit(canvas
+    this.canvasEmitter.next(canvas
     )
     //hoy he estado haciendo el front para el menu de los centros CRUD y
   }

@@ -7,6 +7,7 @@ import { CanvasService } from "../../app/canvas.service";
 import { ComunicadorService } from "../comunicador.service";
 import { CanvasFactory } from "../canvas-factory";
 import {CentroProps} from "../centro-props";
+import {Subscription} from "rxjs";
 @Component({
   selector: "app-controles-lienzo2",
   templateUrl: "./controles-lienzo2.component.html",
@@ -14,12 +15,13 @@ import {CentroProps} from "../centro-props";
 })
 export class ControlesLienzo2Component implements OnInit {
 
+  subscription1: Subscription;
   public lienzos = []; //lista objetos
   private centro: CentroProps = {
     aulas: [], canvasImage: "", height: 2000, id: 0, idCTRSede: "", width: 2000
 
   };
-  private centroSeleccionadoID: number = 888;
+  private centroSeleccionadoID: number = 777;
   private _selecID: number;
 
   constructor(
@@ -33,34 +35,45 @@ export class ControlesLienzo2Component implements OnInit {
     width: 10,
     height: 10
   }
+  sape: string
   CanvasFactory: CanvasFactory;
   selected: fabric.Object;
   canvasImage: string = '';
 
+  listaValores: Array<number>=[]
+
   ngOnInit(): void {
-    this._selecID =888
+    this.sape = 'und'
+    this.centroSeleccionadoID =777
 
       this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService)
     this.comunicadorService.recibirCanvasObs.subscribe(data => {console.warn(data), this.canvas = data})
 
-    this.comunicadorService.recibirCentroObs.subscribe(data => {
+   this.subscription1 =  this.comunicadorService.recibirCentroObs.subscribe(data => {
+      this.centroSeleccionadoID = data;
         console.log('IDCENTRO '+' ****** '+data+' - - - - - - - - - ');
-      this.lienzoService.getCentro(data).subscribe(data => {
-        console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - ');
-        this.lienzos = data.aulas;
-        this.centro = data;
-        this.centroSeleccionadoID = data.id
+      this.lienzoService.getCentro(data).subscribe(data2 =>
+      {
+        this.centro = data2;
+
+        this.lienzos = this.centro.aulas;
+
+        console.log('IDCENTRO '+' ****** '+data2.id+' - - - - - - - - - '+this.centroSeleccionadoID);
+        this.sape='id '+this.centroSeleccionadoID
         for (let i = 0; i <= this.lienzos.length - 1; i++) {
-          this.lienzos[i].idCTRCentro = data.id;
+          this.lienzos[i].idCTRCentro = data2.id;
 
         }
+        this.listaValores.push(data2.id);
+        this.listaValores.push(data2.id+22);
+
         // console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
         this.canvasImage = this.centro.canvasImage
-        console.log('IDCENTRO '+' ****** '+this.centroSeleccionadoID+' - - - - - - - - - ');
-        this.setter(this.centroSeleccionadoID)
+        console.log('IDCENTRO '+' ****** '+this.sape+' - - - - - - - - - ');
+        // this.setter(this.centroSeleccionadoID)
         // this.setCanvasImage()
       });
-
+      // this.comunicadorService.enviarCentro(this.centroSeleccionadoID)
     })
 
   }
@@ -83,6 +96,7 @@ export class ControlesLienzo2Component implements OnInit {
   }
 
   public saveCanvasToDB(): void {
+    // this.centroSeleccionadoID = this.listaValores[0]
     console.log("lll " + this.centroSeleccionadoID +''+ this.centro.id)
     // this.canvas.saveCanvasToDB(this.centroSeleccionadoID);
 
@@ -101,7 +115,13 @@ this.CanvasFactory.saveCanvasToBD(this.centroSeleccionadoID)
   }
 
   public gettter(){
-    console.log('lll 2 '+ this._selecID)
+
+    // this.subscription1.unsubscribe();
+      console.log('IDCENTRO DEF 1'+ this.sape+'')
+    console.log('IDCENTRO DEF 2'+ this.centroSeleccionadoID)
+console.log('IDCENTRO'+this.listaValores)
+    console.log('IDCENTRO'+this.listaValores[0])
+
   }
   public setCanvasImage(): void {
     this.CanvasFactory.setCanvasImageParam(this.canvasImage)

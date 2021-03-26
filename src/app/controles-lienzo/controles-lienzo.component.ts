@@ -30,7 +30,7 @@ size: any;
 CanvasFactory: CanvasFactory;
 selected: fabric.Object
   ancho:number
-  private centroSeleccionadoID: number = 888;
+  private centroSeleccionadoID: number = 777;
   ngOnInit(): void {
     this.ancho = 0
   this.size = {
