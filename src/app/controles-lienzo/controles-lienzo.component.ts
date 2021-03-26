@@ -18,6 +18,7 @@ export class ControlesLienzoComponent implements OnInit {
   // @ViewChild("canvas", { static: false }) htmlCanvas: EditorLienzoComponent;
 
 
+
   public lienzos = []; //lista objetos
   private centro: CentroProps = {
     aulas: [], canvasImage: "", height: 2000, id: 0, idCTRSede: "", width: 2000
@@ -28,8 +29,10 @@ canvas: fabric.Canvas;
 size: any;
 CanvasFactory: CanvasFactory;
 selected: fabric.Object
+  ancho:number
   private centroSeleccionadoID: number = 888;
   ngOnInit(): void {
+    this.ancho = 0
   this.size = {
     width: 1000,
     height: 800
@@ -39,36 +42,54 @@ selected: fabric.Object
     console.log(this.lienzos.length)
     this.comunicadorService.recibirCanvasObs.subscribe(data =>
     {
+
       console.error(data)
       this.canvas = data;
       this.selected = data.getActiveObject();
     })
-    this.lienzoService.getCentro(this.centroSeleccionadoID).subscribe(data => {
-      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
-      this.lienzos = data.aulas;
-      this.centro = data;
 
-      for (let i = 0; i <= this.lienzos.length - 1; i++) {
-        this.lienzos[i].idCTRCentro = data.id;
+    this.comunicadorService.recibirCentroObs.subscribe(data => {
+      this.centroSeleccionadoID = data
+      this.lienzoService.getCentro(this.centroSeleccionadoID).subscribe(data => {
+        console.log("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 "+data.width)
+        this.size.width = data.width
+        this.ancho = data.width
+        // console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+        this.lienzos = data.aulas;
+        this.centro = data;
 
-      }
-      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - -'+' -  '+this.centro.canvasImage+  '- '+' - - - '+data.aulas[0].idCTRCentro);
-      this.props.canvasImage = this.centro.canvasImage
+        for (let i = 0; i <= this.lienzos.length - 1; i++) {
+          this.lienzos[i].idCTRCentro = this.centroSeleccionadoID;
 
-      this.size.width = this.centro.width
-      this.size.height = this.centro.height
+        }
+        // console.log('IDCENTRO '+' ****** '+data.id+' - - - - - -'+' -  '+this.centro.canvasImage+  '- '+' - - - '+data.aulas[0].idCTRCentro);
+        this.props.canvasImage = this.centro.canvasImage
 
-      this.canvas.setWidth(this.centro.width);
-      this.canvas.setHeight(this.centro.height)
-    });
+
+        this.canvas.setWidth(this.centro.width);
+        this.canvas.setHeight(this.centro.height)
+
+        this.changeSize()
+        // this.size.width = 1
+        //
+        // this.size.height = this.centro.height
+      });
+
+    })
+    this.changeSize()
 
   }
 
 
   changeSize(){
+
 this.canvas.setWidth(this.size.width)
 this.canvas.setHeight(this.size.height);
-this.comunicadorService.enviarCanvas(this.canvas)
+    console.log('tamanio'+this.canvas.getWidth())
+    this.size.width = this.ancho
+    this.size.height = this.canvas.getHeight()
+
+    this.comunicadorService.enviarCanvas(this.canvas)
 }
 
   addFigure(){

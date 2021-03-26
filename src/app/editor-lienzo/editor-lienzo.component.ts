@@ -374,68 +374,6 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
     this.props.opacity = this.getActiveStyle('opacity', null) * 100;
   }
 
-  setOpacity(): void {
-    this.setActiveStyle('opacity', parseInt(this.props.opacity, 10) / 100, null);
-  }
-
-  getFill(): void {
-    this.props.fill = this.getActiveStyle('fill', null);
-  }
-
-  setFill(): void {
-    this.setActiveStyle('fill', this.props.fill, null);
-  }
-
-  removeSelected(): void {
-    const activeObject = this.canvas.getActiveObject();
-    const activeGroup = this.canvas.getActiveObjects();
-    const activeId = this.canvas.getActiveObject().toDatalessObject(["id", "nombre", "CNVIMG"]).id;
-    if (activeObject) {
-      this.canvas.remove(activeObject);
-      // this.textString = '';
-    } else if (activeGroup) {
-      this.canvas.discardActiveObject();
-      const self = this;
-      activeGroup.forEach((object) => {
-        self.canvas.remove(object);
-      });
-    }
-    this.deleteCanvasFromDB(activeId);
-  } // eliminar bd el seleccionado
-
-  bringToFront(): void {
-    const activeObject = this.canvas.getActiveObject();
-    const activeGroup = this.canvas.getActiveObjects();
-
-    if (activeObject) {
-      activeObject.bringToFront();
-      activeObject.opacity = 1;
-    } else if (activeGroup) {
-      this.canvas.discardActiveObject();
-      activeGroup.forEach((object) => {
-        object.bringToFront();
-      });
-    }
-  }//traer figura al frente, superponer encima de otra
-
-  sendToBack(): void {
-    const activeObject = this.canvas.getActiveObject();
-    const activeGroup = this.canvas.getActiveObjects();
-
-    if (activeObject) {
-      this.canvas.sendToBack(activeObject);
-      activeObject.sendToBack();
-      activeObject.opacity = 1;
-    } else if (activeGroup) {
-      this.canvas.discardActiveObject();
-      activeGroup.forEach((object) => {
-        object.sendToBack();
-      });
-    }
-  }// el contrario del metodo anterior
-
-
-
   //limpia el lienzo entero, no los borra de la bd
 
   resetPanels(): void {
@@ -480,9 +418,7 @@ this.comunicadorService.recibirCanvasObs.subscribe(data => {
 
   } //eliminar elemento de la bd, se llama desde removeSelected
 
-  updateCanvasFromDB(Object:ObjProps): void{
-    this._lienzoService.updateLienzo(Object).subscribe(data => console.log("OBJETO CON ID: "+Object.id + "ACTUALIZADO DE LA BD ----- "+data));
-  } // update
+
 
 
   loadCanvasFromMocks(mock: ObjProps[], centro: CentroProps):void {

@@ -6,27 +6,32 @@ import {CentroProps} from "./centro-props";
 
 @Injectable()
 export class CanvasService {
+
     objetoBD: ObjProps;
 
     constructor(private http: HttpClient) {}
 
-    private url: string =  "http://localhost:8080/centro/";
-    private url2: string = "http://localhost:8080/centro/";
-    private url3: string = "http://localhost:8080/lienzo/";
-    private url4: string = "http://localhost:8080/centro/888/aula/";
+  private url: string =  "http://localhost:8080/centro/";
+  private url2: string = "http://localhost:8080/centro/";
+  private url3: string = "http://localhost:8080/lienzo/";
+  private url4: string = "http://localhost:8080/centro/";
   private url5: string = "http://localhost:8080/lienzos/";
+  private url6: string = "http://localhost:8080/centros/"
 
 
 
   getCentro(idCentro: number): Observable<CentroProps> {
         return this.http.get<CentroProps>(this.url+idCentro);
     }
+  getCentros(): Observable<CentroProps[]> {
+    return this.http.get<CentroProps[]>(this.url6);
+  }
 
   addToCentro(idCentro: number, idObj: number): Observable<CentroProps> {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
     };
-    return this.http.put<CentroProps>(this.url4+idObj, httpOptions);
+    return this.http.put<CentroProps>(this.url+idCentro+'/aula/'+idObj, httpOptions);
     console.log("ADDED")
   }
 
@@ -70,10 +75,10 @@ export class CanvasService {
 
     updateCentro(object: CentroProps): Observable<CentroProps>{
     console.log(object)
-      this.postLienzo(object.aulas[0])
-      this.updateLienzo(object.aulas[1])
-      this.updateLienzo(object.aulas[2])
-      this.updateLienzo(object.aulas[3])
+      // this.postLienzo(object.aulas[0])
+      // this.updateLienzo(object.aulas[1])
+      // this.updateLienzo(object.aulas[2])
+      // this.updateLienzo(object.aulas[3])
 
       const httpOptions = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' })
@@ -83,7 +88,7 @@ export class CanvasService {
     }
 
   postCentro(object: CentroProps): Observable<CentroProps>{
-    return this.http.post<CentroProps>(this.url2+object.id, object);
+    return this.http.post<CentroProps>(this.url2, object);
   }
 
     findLienzo(id: any): Observable<ObjProps>{

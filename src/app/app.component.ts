@@ -22,7 +22,7 @@ export class AppComponent implements OnInit{
   public centroSeleccionadoID: number;
 
   constructor(private _lienzoService : CanvasService, private comunicadorService: ComunicadorService){
-  this.mostrar = false;
+  this.mostrar = true;
   }
   ngOnInit(): void {
     console.warn(this.lienzos.length)

@@ -18,10 +18,7 @@ import {CentroProps} from "./centro-props";
 
 export class CanvasFactory implements OnInit {
 
-  public centro: CentroProps = {
-    aulas: [], canvasImage: "", height: 1000, id: 0, idCTRSede: "", width: 100
 
-  }
 
   public canvas: fabric.Canvas;
   @ViewChild('htmlCanvas') htmlCanvas: ElementRef;
@@ -97,15 +94,38 @@ export class CanvasFactory implements OnInit {
 
 
   };
+  private seleccionadoID: number;
+  private centro: { idCTRSede: string; aulas: any[]; width: number; canvasImage: string; id: number; height: number };
 
   constructor(private lienzoService: CanvasService, private comunicadorService: ComunicadorService) {
+    this.centro = {
+      aulas: [], canvasImage: "", height: 1000, id: 0, idCTRSede: "", width: 100
 
+    }
+    this.seleccionadoID = 2222
     this.size = {
       width: 1140,
       height: 800,
     };
     console.warn(this.canvas)
 
+    this.comunicadorService.recibirCentroObs.subscribe(data =>{
+      console.log(data)
+      this.seleccionadoID  = data
+      console.log("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 "+data)
+      // this.comunicadorService.enviarCentro(this.seleccionadoID)
+      this.lienzoService.getCentro(data).subscribe(data =>{
+        console.log("22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222 -- "+data.id)
+        this.seleccionadoID = data.id
+        console.log("22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222 -- "+this.seleccionadoID)
+
+        this.canvas.setWidth(data.width)
+        this.canvas.setHeight(data.height);
+        this.comunicadorService.enviarCanvas(this.canvas)
+
+      })
+    })
+    // this.comunicadorService.enviarCentro(this.seleccionadoID)
     this.comunicadorService.recibirSelectedObs.subscribe(data2 =>{
       console.log(data2)
       this.props.id = data2.id
@@ -208,8 +228,11 @@ export class CanvasFactory implements OnInit {
     this.setCanvasImageParam(centro.canvasImage);
     this.objCentro = centro;
     console.error(centro.aulas)
-    console.error(this.objCentro.aulas)
+    console.error(this.objCentro.aulas);
+
     this.comunicadorService.enviarCanvas(this.canvas)
+
+
   } // cargar desde bd
 
 
@@ -345,8 +368,8 @@ export class CanvasFactory implements OnInit {
     this.props.canvasImage = cnvImg;
     this.canvas.renderAll();
     console.log("CANVASIMG");
-    this.canvas.setWidth(0);
-    this.canvas.setWidth(1140);
+    // this.canvas.setWidth(0);
+    // this.canvas.setWidth(1140);
 
 
     //Actualizar el canvas despues de cada cambio
@@ -538,6 +561,7 @@ export class CanvasFactory implements OnInit {
 
   saveCanvasToBD() {
     console.log("*************************************")
+    console.log(this.seleccionadoID)
     console.log("*************************************")
     // this.centro.width = this.canvas.getWidth()
     // this.centro.height = this.canvas.getHeight();
@@ -566,7 +590,7 @@ export class CanvasFactory implements OnInit {
         console.log("NO EXISTE, CREANDO")
 
       }
-      this.lienzoService.addToCentro(999, item.id).subscribe(data => console.log(data))
+      this.lienzoService.addToCentro(this.seleccionadoID, item.id).subscribe(data => console.log(data))
       this.comunicadorService.enviarCanvas(this.canvas)
     }
 

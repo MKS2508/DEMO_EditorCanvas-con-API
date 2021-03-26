@@ -39,7 +39,7 @@ export class ControlesLienzo2Component implements OnInit {
     this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService)
     this.comunicadorService.recibirCanvasObs.subscribe(data => {console.warn(data), this.canvas = data})
     this.lienzoService.getCentro(this.centroSeleccionadoID).subscribe(data => {
-      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - '+data.aulas[0].idCTRCentro);
+      console.log('IDCENTRO '+' ****** '+data.id+' - - - - - - - - - ');
       this.lienzos = data.aulas;
       this.centro = data;
 

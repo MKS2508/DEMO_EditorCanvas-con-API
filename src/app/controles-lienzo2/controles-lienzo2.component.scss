@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row-reverse;
+}
+
+.flexContainer{
+  display: flex;
+  flex-wrap: wrap;
+}
+.flexItem {
+  width: 60%;
+
+}
+
+.centrar{
+  width:100%;
+  margin-left: 5%;
+}
+
+.boton{
+  width: 14%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.flexItem1{
+  width: 40%;
+
+}
+
+.imagen{
+  margin-left: auto;
+  margin-right: auto;
+  width: 30%;
+}
+
+.texto{
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+  text-align: center;
+}
+
