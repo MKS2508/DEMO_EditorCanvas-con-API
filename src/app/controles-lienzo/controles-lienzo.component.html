@@ -2,61 +2,73 @@
 <div class="card">
     <div class="card-header">Tamaño del lienzo</div>
     <div class="card-body">
+
+
+      <div class="verCanvas"  *ngIf="editorCanvas == false">
         <div class="form-group">
-            <div class="input-group">
-                <input type="text" class="form-control" [(ngModel)]="size.width"
+          <div class="input-group mb-3">
+                    <span class="input-group-text" [(ngModel)] ="size.width">
+                        Anchura del lienzo: {{size.width}}
+                    </span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group mb-3">
+                    <span class="input-group-text" [(ngModel)] ="size.height">
+                        Altura del lienzo: {{size.height}}
+                    </span>
+          </div>
+        </div>
+      </div>
+      <div class="editarCanvas" *ngIf="editorCanvas == true">
+        <div class="form-group">
+          <div class="input-group">
+            <input type="text" class="form-control" [(ngModel)]="size.width"
                    (keyup)="changeSize()" >
-                <div class="input-group-append">
+            <div class="input-group-append">
                     <span class="input-group-text">
                         Anchura del lienzo
                     </span>
-                </div>
             </div>
+          </div>
         </div>
         <div class="form-group">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" [(ngModel)]="size.height"
-                (keyup)="changeSize()" >
-                <div class="input-group-append">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" [(ngModel)]="size.height"
+                   (keyup)="changeSize()" >
+            <div class="input-group-append">
                     <span class="input-group-text">
                         Altura del lienzo
                     </span>
-                </div>
             </div>
+          </div>
         </div>
-
-
-
-
-
-
-    </div>
-    <div class="card">
-        <div class="card-header">Opciones</div>
-        <div class="card-body text-center">
+        <div class="card">
+          <div class="card-header">Opciones</div>
+          <div class="card-body text-center">
             <div class="btn-group" role="group" aria-label="...">
-                <button data-toggle="tooltip" data-placement="bottom" title="Delete element" type="button"
-                    class="btn btn-outline-danger" [disabled]="!selected"
-                    (click)="removeSelected();">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Send to back" type="button"
-                    class="btn btn-outline-primary" [disabled]="!selected" (click)="sendToBack();">
-                    <i class="fa fa-level-down" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Send to front" type="button"
-                    class="btn btn-outline-primary" [disabled]="!selected" (click)="bringToFront();">
-                    <i class="fa fa-level-up" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Clone" type="button"
-                    class="btn btn-outline-primary"
-                    [disabled]="!selected || selected.type == 'group'" (click)="clone();">
-                    <i class="fa fa-clone" aria-hidden="true"></i>
-                </button>
-                <button data-toggle="tooltip" data-placement="bottom" title="Unselect" type="button"
-                    class="btn btn-outline-primary" [disabled]="!selected" (click)="cleanSelect()">
-                    <i class="fa fa-remove" aria-hidden="true"></i>
-                </button>
+              <button data-toggle="tooltip" data-placement="bottom" title="Delete element" type="button"
+                      class="btn btn-outline-danger" [disabled]="!selected"
+                      (click)="removeSelected();">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+              <button data-toggle="tooltip" data-placement="bottom" title="Send to back" type="button"
+                      class="btn btn-outline-primary" [disabled]="!selected" (click)="sendToBack();">
+                <i class="fa fa-level-down" aria-hidden="true"></i>
+              </button>
+              <button data-toggle="tooltip" data-placement="bottom" title="Send to front" type="button"
+                      class="btn btn-outline-primary" [disabled]="!selected" (click)="bringToFront();">
+                <i class="fa fa-level-up" aria-hidden="true"></i>
+              </button>
+              <button data-toggle="tooltip" data-placement="bottom" title="Clone" type="button"
+                      class="btn btn-outline-primary"
+                      [disabled]="!selected || selected.type == 'group'" (click)="clone();">
+                <i class="fa fa-clone" aria-hidden="true"></i>
+              </button>
+              <button data-toggle="tooltip" data-placement="bottom" title="Unselect" type="button"
+                      class="btn btn-outline-primary" [disabled]="!selected" (click)="cleanSelect()">
+                <i class="fa fa-remove" aria-hidden="true"></i>
+              </button>
 
 
             </div>
@@ -64,9 +76,13 @@
             <div class="custom-item-title">Controles basicos</div>
 
             <button data-toggle="tooltip" (click)="deleteAll()" data-placement="bottom" title="Clean Canvas" type="button"
-                class="btn btn-danger" >
-                <i class="fa fa-ban" aria-hidden="true"></i> BORRAR LIENZO</button>
+                    class="btn btn-danger" >
+              <i class="fa fa-ban" aria-hidden="true"></i> BORRAR LIENZO</button>
             <button type="button" class="btn btn-primary" (click)="addFigure();">Agregar rectangulo</button>
+          </div>
         </div>
+
+      </div>
     </div>
+
 </div>

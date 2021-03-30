@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { EditorLienzoComponent } from "../../app/editor-lienzo/editor-lienzo.component";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { EditorLienzoComponent } from '../../app/editor-lienzo/editor-lienzo.component';
 // import { OBJETOSPROPS2 } from "./mock-props";
 // import { OBJETOSPROPS } from "./mock-props";
 
@@ -9,16 +9,16 @@ import { CanvasFactory } from "../canvas-factory";
 import {CentroProps} from "../centro-props";
 import {Subscription} from "rxjs";
 @Component({
-  selector: "app-controles-lienzo2",
-  templateUrl: "./controles-lienzo2.component.html",
-  styleUrls: ["./controles-lienzo2.component.scss"],
+  selector: 'app-controles-lienzo2',
+  templateUrl: './controles-lienzo2.component.html',
+  styleUrls: ['./controles-lienzo2.component.scss'],
 })
 export class ControlesLienzo2Component implements OnInit {
 
   subscription1: Subscription;
-  public lienzos = []; //lista objetos
+  public lienzos = []; // lista objetos
   private centro: CentroProps = {
-    aulas: [], canvasImage: "", height: 2000, id: 0, idCTRSede: "", width: 2000
+    aulas: [], canvasImage: '', height: 2000, id: 0, idCTRSede: '', width: 2000
 
   };
   private centroSeleccionadoID: number = 777;
@@ -43,6 +43,7 @@ export class ControlesLienzo2Component implements OnInit {
   listaValores: Array<number>=[]
 
   ngOnInit(): void {
+    this.editorCanvas = true  ;
     this.sape = 'und'
     this.centroSeleccionadoID =777
 
@@ -103,6 +104,7 @@ export class ControlesLienzo2Component implements OnInit {
 this.CanvasFactory.saveCanvasToBD(this.centroSeleccionadoID)
   }
 //TODO: seleccionadoID no se actualiza en el subscribe
+  editorCanvas: boolean;
   public setter(data){
 
     console.log('lll '+ data)

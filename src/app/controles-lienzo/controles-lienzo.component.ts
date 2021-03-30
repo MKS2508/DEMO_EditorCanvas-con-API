@@ -1,14 +1,14 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
 
-import { ObjProps } from "../obj-props";
+import { ObjProps } from '../obj-props';
 
 import { CanvasProps } from '../CanvasProps';
 import { CanvasService } from '../canvas.service';
 import { ComunicadorService } from '../comunicador.service';
 import { EditorLienzoComponent } from '../editor-lienzo/editor-lienzo.component';
 import { CanvasFactory } from '../canvas-factory';
-import {CentroProps} from "../centro-props";
+import {CentroProps} from '../centro-props';
 @Component({
   selector: 'app-controles-lienzo',
   templateUrl: './controles-lienzo.component.html',
@@ -19,7 +19,7 @@ export class ControlesLienzoComponent implements OnInit {
 
 
 
-  public lienzos = []; //lista objetos
+  public lienzos = []; // lista objetos
   private centro: CentroProps = {
     aulas: [], canvasImage: "", height: 2000, id: 0, idCTRSede: "", width: 2000
 
@@ -28,15 +28,18 @@ public EditorLienzoComponent: EditorLienzoComponent
 canvas: fabric.Canvas;
 size: any;
 CanvasFactory: CanvasFactory;
-selected: fabric.Object
-  ancho:number
-  private centroSeleccionadoID: number = 777;
+selected: fabric.Object;
+  ancho: number;
+
+  private centroSeleccionadoID = 777;
   ngOnInit(): void {
-    this.ancho = 0
-  this.size = {
+    // tslint:disable-next-line:no-unused-expression
+    this.editorCanvas = true;
+    this.ancho = 0;
+    this.size = {
     width: 1000,
     height: 800
-  }
+  };
     this.CanvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService);
     console.warn(this.canvas)
     console.log(this.lienzos.length)
@@ -156,6 +159,7 @@ this.CanvasFactory.addFigure()
     scaleX: 1,
     scaleY:1
   }
+  editorCanvas: boolean;
 
 
   constructor(private lienzoService : CanvasService, private ref: ChangeDetectorRef, private comunicadorService: ComunicadorService){}
