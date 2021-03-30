@@ -34,7 +34,15 @@ selected: fabric.Object;
   private centroSeleccionadoID = 777;
   ngOnInit(): void {
     // tslint:disable-next-line:no-unused-expression
-    this.editorCanvas = true;
+    this.editorCanvas = false;
+    this.comunicadorService.recibirEditorObs.subscribe(data => {
+      if (data === true) {
+        this.editorCanvas = true;
+      } else {
+        this.editorCanvas = false;
+      }
+    });
+
     this.ancho = 0;
     this.size = {
     width: 1000,

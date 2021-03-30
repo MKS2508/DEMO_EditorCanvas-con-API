@@ -18,6 +18,10 @@ export class ComunicadorService {
  //BLOQUE 1: mostrar/ocultar menu centros
   private mostrarEmitter = new EventEmitter<boolean>();
   recibirMostrarObs = this.mostrarEmitter.asObservable();
+
+  private editorEmitter = new BehaviorSubject<boolean>(false);
+  recibirEditorObs = this.editorEmitter.asObservable();
+
   private initialState: 0;
   private seleccionarCentroEmitter = new BehaviorSubject<number>(this.initialState);
 
@@ -28,6 +32,10 @@ export class ComunicadorService {
     this.mostrarEmitter.next(mostrar);
   }
 
+  enviarEditor(mostrar: boolean){
+    this.editorEmitter.next(mostrar);
+  }
+
   enviarCentro(centroID: number){
   this.seleccionarCentroEmitter.next(centroID);
   }
@@ -35,12 +43,12 @@ export class ComunicadorService {
 
 //BLOQUE 2: Canvas
   canvas: fabric.Canvas
-  private canvasEmitter = new BehaviorSubject<fabric.Canvas>(this.canvas);
+  private canvasEmitter = new EventEmitter<fabric.Canvas>();
   recibirCanvasObs = this.canvasEmitter.asObservable();
 
 
   objProps: ObjProps
-  private selectedEmitter = new BehaviorSubject<ObjProps>(this.objProps);
+  private selectedEmitter = new EventEmitter<ObjProps>();
   recibirSelectedObs = this.selectedEmitter.asObservable()
 
   enviarSelected(obj: ObjProps){
@@ -51,6 +59,5 @@ export class ComunicadorService {
   enviarCanvas(canvas: fabric.Canvas){
     this.canvasEmitter.next(canvas
     )
-    //hoy he estado haciendo el front para el menu de los centros CRUD y
   }
 }

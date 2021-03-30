@@ -27,7 +27,8 @@
         <div class="card-body">
             <div class="custom-item">
               <div class="verCanvas"  *ngIf="editorCanvas == false" >
-                <h5 [(ngModel)]="canvasImage">URL: {{canvasImage}}</h5>
+                <input type="text" class="form-control" placeholder="http://example.jpg"
+                       [(ngModel)]="canvasImage" (keyup)="setCanvasImage()" disabled>
               </div>
 
               <div class="editarCanvas" *ngIf="editorCanvas == true">

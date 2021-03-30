@@ -47,32 +47,64 @@
         <div class="custom-item" *ngIf="selected && selected.type != 'group'">
           <div class="custom-item-body">
             <div class="custom-item-title">ID</div>
-            <input type="text" class="form-control" [(ngModel)]="props.id"
-                   (keyup)="setId()">
+
+            <div *ngIf="editorCanvas == true">
+              <input type="text" class="form-control" [(ngModel)]="props.id"
+                     (keyup)="setId()" >
+            </div>
+            <div *ngIf="editorCanvas == false">
+              <input type="text" class="form-control" [(ngModel)]="props.id"
+                     (keyup)="setId()" disabled >
+            </div>
+
           </div>
         </div>
 
         <div class="custom-item" *ngIf="selected && selected.type != 'group'">
           <div class="custom-item-body">
             <div class="custom-item-title">Nombre</div>
-            <input type="text" class="form-control" [(ngModel)]="props.nombre"
-                   (keyup)="setId()">
+            <div *ngIf="editorCanvas == true">
+              <input type="text" class="form-control" [(ngModel)]="props.nombre"
+                     (keyup)="setId()">
+            </div>
+            <div *ngIf="editorCanvas == false">
+              <input type="text" class="form-control" [(ngModel)]="props.nombre"
+                     (keyup)="setId()" disabled>
+            </div>
+
           </div>
         </div>
 
         <div class="custom-item" *ngIf="selected && selected.type != 'group'">
           <div class="custom-item-title">Nivel de opacidad</div>
           <div class="custom-item-body">
-            <input type="range" [(ngModel)]="props.opacity"
-                   (change)="setOpacity()">{{props.opacity}}
+
+            <div *ngIf="editorCanvas == true">
+              <input type="range" [(ngModel)]="props.opacity"
+                     (change)="setOpacity()">{{props.opacity}}
+            </div>
+            <div *ngIf="editorCanvas == false">
+              <input type="range" [(ngModel)]="props.opacity"
+                     (change)="setOpacity()" disabled>{{props.opacity}}
+            </div>
+
+
           </div>
         </div>
         <div class="custom-item" *ngIf="selected">
           <div class="custom-item-title">Color de relleno</div>
           <div class="custom-item-body">
-            <input type="text" class="form-control" [cpPosition]="'bottom'"
-                   [(colorPicker)]="props.fill" [style.background]="props.fill"
-                   [value]="props.fill" (colorPickerChange)="setFill()">
+            <div *ngIf="editorCanvas == true">
+              <input type="text" class="form-control" [cpPosition]="'bottom'"
+                     [(colorPicker)]="props.fill" [style.background]="props.fill"
+                     [value]="props.fill" (colorPickerChange)="setFill()">
+            </div>
+            <div *ngIf="editorCanvas == false">
+              <input type="text" class="form-control" [cpPosition]="'bottom'"
+                     [(colorPicker)]="props.fill" [style.background]="props.fill"
+                     [value]="props.fill" (colorPickerChange)="setFill()" disabled>
+            </div>
+
           </div>
         </div>
       </div>

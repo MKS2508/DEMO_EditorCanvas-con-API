@@ -35,6 +35,15 @@ export class ControlesLienzo3Component implements OnInit {
   constructor(private lienzoService: CanvasService, private comunicadorService: ComunicadorService) { }
 
   ngOnInit(): void {
+    this.editorCanvas = false;
+    this.comunicadorService.recibirEditorObs.subscribe(data => {
+      if (data === true) {
+        this.editorCanvas = true;
+      } else {
+        this.editorCanvas = false;
+      }
+    });
+
     this.canvasFactory = new CanvasFactory(this.lienzoService, this.comunicadorService)
 
     this.comunicadorService.recibirCanvasObs.subscribe(data => {
@@ -143,6 +152,7 @@ export class ControlesLienzo3Component implements OnInit {
 
   }
   //pasar a factory
+  editorCanvas: boolean;
   getFill(): void {
     this.props.fill = this.getActiveStyle('fill', null);
   }

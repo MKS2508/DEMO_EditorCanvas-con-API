@@ -16,7 +16,7 @@ import {ComunicadorService} from './comunicador.service';
 export class AppComponent implements OnInit {
 
   constructor(private  lienzoService: CanvasService, private comunicadorService: ComunicadorService) {
-  this.mostrar = true;
+  this.mostrar = false;
   }
   title = 'angular-editor-fabric-js';
 
@@ -27,7 +27,16 @@ export class AppComponent implements OnInit {
 
 
   @ViewChild('canvas', { static: false }) canvas: EditorLienzoComponent;
+  editorCanvas: boolean;
   ngOnInit(): void {
+    this.editorCanvas = false;
+    this.comunicadorService.recibirEditorObs.subscribe(data => {
+      if (data === true) {
+        this.editorCanvas = true;
+      } else {
+        this.editorCanvas = false;
+      }
+    });
     console.warn(this.lienzos.length);
     this.comunicadorService.recibirMostrarObs.subscribe(data => {this.mostrar = data; console.warn(data); });
     this.comunicadorService.recibirCentroObs.subscribe(data => {this.centroSeleccionadoID = data;
@@ -51,11 +60,7 @@ export class AppComponent implements OnInit {
   }
 
 
-
-
-
-
-
-
-
+  activarEdicion(b: boolean) {
+    this.comunicadorService.enviarEditor(b);
+  }
 }

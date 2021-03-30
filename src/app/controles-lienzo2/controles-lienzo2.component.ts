@@ -43,7 +43,15 @@ export class ControlesLienzo2Component implements OnInit {
   listaValores: Array<number>=[]
 
   ngOnInit(): void {
-    this.editorCanvas = true  ;
+    this.editorCanvas = false  ;
+    this.comunicadorService.recibirEditorObs.subscribe(data => {
+      if (data === true) {
+        this.editorCanvas = true;
+      } else {
+        this.editorCanvas = false;
+      }
+    });
+
     this.sape = 'und'
     this.centroSeleccionadoID =777
 
