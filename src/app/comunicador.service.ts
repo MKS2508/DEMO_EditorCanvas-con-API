@@ -34,10 +34,13 @@ export class ComunicadorService {
   // FIN 1
 
 //BLOQUE 2: Canvas
-  private canvasEmitter = new EventEmitter<fabric.Canvas>();
+  canvas: fabric.Canvas
+  private canvasEmitter = new BehaviorSubject<fabric.Canvas>(this.canvas);
   recibirCanvasObs = this.canvasEmitter.asObservable();
 
-  private selectedEmitter = new EventEmitter<ObjProps>();
+
+  objProps: ObjProps
+  private selectedEmitter = new BehaviorSubject<ObjProps>(this.objProps);
   recibirSelectedObs = this.selectedEmitter.asObservable()
 
   enviarSelected(obj: ObjProps){

@@ -11,12 +11,12 @@ export class CanvasService {
 
     constructor(private http: HttpClient) {}
 
-  private url: string =  "http://localhost:8080/centro/";
-  private url2: string = "http://localhost:8080/centro/";
-  private url3: string = "http://localhost:8080/lienzo/";
-  private url4: string = "http://localhost:8080/centro/";
-  private url5: string = "http://localhost:8080/lienzos/";
-  private url6: string = "http://localhost:8080/centros/"
+  private url: string =  "http://192.168.1.139:8080/centro/";
+  private url2: string = "http://192.168.1.139:8080/centro/";
+  private url3: string = "http://192.168.1.139:8080/lienzo/";
+  private url4: string = "http://192.168.1.139:8080/centro/";
+  private url5: string = "http://192.168.1.139:8080/lienzos/";
+  private url6: string = "http://192.168.1.139:8080/centros/"
 
 
 
